@@ -2,6 +2,7 @@ package com.example.hrsystem.controller;
 
 import com.example.hrsystem.entity.Department;
 import com.example.hrsystem.repository.DepartmentRepository;
+import com.example.hrsystem.repository.EmployeeRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.*;
 public class DepartmentController {
 
     private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository; // ДОДАЛИ РЕПОЗИТОРІЙ ПРАЦІВНИКІВ
 
-    public DepartmentController(DepartmentRepository departmentRepository) {
+    public DepartmentController(DepartmentRepository departmentRepository, EmployeeRepository employeeRepository) {
         this.departmentRepository = departmentRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @GetMapping("/departments")
@@ -27,11 +30,14 @@ public class DepartmentController {
         return "department-details";
     }
 
-    // Зверни увагу: ID у відділів зазвичай Integer, якщо у тебе Long - зміни Integer на Long
     @GetMapping("/departments/edit/{id}")
     public String showEditForm(@PathVariable Integer id, Model model) {
         Department department = departmentRepository.findById(id).orElseThrow();
         model.addAttribute("department", department);
+
+        // ДОДАЛИ: Шукаємо всіх людей, які працюють у цьому відділі
+        model.addAttribute("deptEmployees", employeeRepository.findByDepartmentId(id));
+
         return "department-details";
     }
 
