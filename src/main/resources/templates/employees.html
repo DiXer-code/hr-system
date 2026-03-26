@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HR Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <i class="bi bi-rocket-takeoff-fill me-2"></i> HR System
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a href="/employees" class="nav-link active">
+                <i class="bi bi-people-fill"></i> Співробітники
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/departments" class="nav-link">
+                <i class="bi bi-building"></i> Відділи
+            </a>
+        </li>
+        <li class="nav-item mt-5">
+            <a href="#" class="nav-link text-danger">
+                <i class="bi bi-box-arrow-left"></i> Вихід
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="container-fluid animate-fade-up">
+
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="fw-bold text-dark">Команда</h2>
+                <p class="text-muted">Управління персоналом та моніторинг</p>
+            </div>
+            <a href="/employees/new" class="btn btn-primary-modern">
+                <i class="bi bi-plus-lg me-2"></i>Додати співробітника
+            </a>
+        </div>
+
+        <div class="card-custom p-4 animate-fade-up animate-delay-1">
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                    <tr>
+                        <th>Співробітник</th>
+                        <th>Посада</th>
+                        <th>Департамент</th>
+                        <th>Контакти</th>
+                        <th>Статус</th>
+                        <th class="text-end">Дії</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="employee : ${employees}">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle me-3" style="width: 45px; height: 45px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img th:if="${employee.avatar != null}" th:src="'data:image/jpeg;base64,' + ${employee.getAvatarBase64()}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <span th:if="${employee.avatar == null}" th:text="${employee.firstName != null && employee.firstName.length() > 0 ? employee.firstName.substring(0,1) : '?'}"></span>
+                                </div>
+                                <div>
+                                    <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="text-decoration-none text-dark fw-bold stretched-link">
+                                        <span th:text="${employee.lastName + ' ' + employee.firstName}"></span>
+                                    </a>
+                                    <div class="small text-muted" th:text="${employee.email}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-light text-dark border" th:text="${employee.position != null ? employee.position.name : '-'}"></span></td>
+                        <td th:text="${employee.department != null ? employee.department.name : '-'}"></td>
+                        <td th:text="${employee.phoneMain}"></td>
+
+                        <td>
+                            <span class="badge rounded-pill px-3 py-2"
+                                  th:classappend="${employee.status == 'Активний' ? 'bg-success-subtle text-success' :
+                                                   (employee.status == 'Звільнений' ? 'bg-danger-subtle text-danger' :
+                                                   (employee.status == 'У відпустці' ? 'bg-warning-subtle text-warning' :
+                                                   (employee.status == 'Лікарняний' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary')))}"
+                                  th:text="${employee.status != null ? employee.status : 'Активний'}">
+                            </span>
+                        </td>
+
+                        <td class="text-end" style="position: relative; z-index: 20;">
+                            <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="btn btn-sm btn-light text-primary me-1"><i class="bi bi-pencil-fill"></i></a>
+                            <a th:href="@{/employees/delete/{id}(id=${employee.id})}" class="btn btn-sm btn-light text-danger" onclick="return confirm('Видалити?')"><i class="bi bi-trash3-fill"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${employees.empty}" class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <p class="text-muted mt-3">Список співробітників порожній</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-color: #f1f5f9;
+    --sidebar-bg: #1e293b;
+    --card-bg: #ffffff;
+    --text-main: #334155;
+    --text-light: #64748b;
+    --danger: #ef4444;
+    --success: #10b981;
+}
+
+/* --- ГЛОБАЛЬНІ НАЛАШТУВАННЯ --- */
+body {
+    background-color: var(--bg-color);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    overflow-x: hidden; /* Забороняємо горизонтальний скрол сторінки */
+    width: 100%;
+}
+
+/* --- Анімації --- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+
+/* --- Sidebar --- */
+.sidebar {
+    height: 100vh;
+    width: 260px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--sidebar-bg);
+    color: white;
+    padding-top: 2rem;
+    transition: all 0.3s;
+    z-index: 1000;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.nav-link {
+    color: #94a3b8;
+    padding: 12px 25px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link i { margin-right: 12px; font-size: 1.1rem; }
+
+.nav-link:hover, .nav-link.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: var(--primary-color);
+}
+
+/* --- Main Content --- */
+.main-content {
+    margin-left: 260px;
+    padding: 2rem;
+    max-width: 100vw;
+    overflow-x: hidden; /* Обрізаємо все, що вилазить */
+}
+
+/* --- Картки --- */
+.card-custom {
+    background: var(--card-bg);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* --- Таблиця --- */
+.table-modern {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    white-space: nowrap; /* Забороняємо перенос слів, щоб таблиця була рівною */
+}
+
+.table-modern thead th {
+    border: none;
+    color: var(--text-light);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 15px 20px;
+}
+
+.table-modern tbody tr {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    transition: all 0.2s;
+}
+
+.table-modern tbody tr:hover {
+    transform: scale(1.005);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    z-index: 10;
+    position: relative;
+}
+
+.table-modern td {
+    border: none;
+    padding: 15px 20px;
+    vertical-align: middle;
+}
+
+.table-modern td:first-child { border-radius: 10px 0 0 10px; }
+.table-modern td:last-child { border-radius: 0 10px 10px 0; }
+
+/* --- Аватарка --- */
+.avatar-circle {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-right: 15px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* --- Кнопки --- */
+.btn-primary-modern {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 500;
+    color: white;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-primary-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+    color: white;
+}
+
+/* --- Вкладки --- */
+.nav-tabs-modern {
+    border-bottom: 2px solid #e2e8f0;
+}
+.nav-tabs-modern .nav-link {
+    border: none;
+    color: var(--text-light);
+    font-weight: 500;
+    padding-bottom: 12px;
+    margin-right: 20px;
+    position: relative;
+}
+.nav-tabs-modern .nav-link.active {
+    color: var(--primary-color);
+    background: transparent;
+}
+.nav-tabs-modern .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 3px 3px 0 0;
+    animation: slideInLeft 0.3s ease;
+}
+
+/* --- Inputs --- */
+.form-control-modern {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+    transition: all 0.2s;
+}
+.form-control-modern:focus {
+    background-color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+/* ================================================= */
+/* ФІКС СКРОЛБАРУ (ОДИН І ЄДИНИЙ)          */
+/* ================================================= */
+
+/* Робимо так, щоб таблиця не розтягувала сторінку */
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+    /* Ховаємо скролбар для Firefox */
+    scrollbar-width: none !important;
+}
+
+/* Ховаємо скролбар для Chrome, Safari, Edge, Opera */
+.table-responsive::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+.table-responsive::-webkit-scrollbar-track,
+.table-responsive::-webkit-scrollbar-thumb {
+    background: transparent !important;
+    display: none !important;
+}

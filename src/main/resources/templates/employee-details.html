@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Профіль співробітника</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-brand"><i class="bi bi-rocket-takeoff-fill me-2"></i> HR System</div>
+    <ul class="nav flex-column">
+        <li class="nav-item"><a href="/employees" class="nav-link active"><i class="bi bi-people-fill"></i> Співробітники</a></li>
+        <li class="nav-item"><a href="/departments" class="nav-link"><i class="bi bi-building"></i> Відділи</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="container-fluid animate-fade-up">
+
+        <form th:action="@{/employees/save}" th:object="${employee}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <a href="/employees" class="btn btn-light rounded-circle me-3" style="width: 40px; height: 40px;"><i class="bi bi-arrow-left"></i></a>
+                    <div>
+                        <h4 class="m-0 fw-bold" th:text="${employee.id == null ? 'Новий співробітник' : employee.lastName + ' ' + employee.firstName}"></h4>
+                        <span class="text-muted small" th:text="${employee.id == null ? 'Заповніть анкету' : 'Редагування профілю'}"></span>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary-modern px-5">
+                        <i class="bi bi-check2-circle me-2"></i>Зберегти
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 mb-4" th:if="${employee.id != null}">
+                    <div class="card-custom p-4 text-center sticky-top" style="top: 20px;">
+
+                        <div class="avatar-circle mx-auto mb-3" style="width: 100px; height: 100px; overflow: hidden; font-size: 2.5rem; display: flex; align-items: center; justify-content: center;">
+                            <img th:if="${employee.avatar != null}" th:src="'data:image/jpeg;base64,' + ${employee.getAvatarBase64()}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <span th:if="${employee.avatar == null}" th:text="${employee.firstName != null && employee.firstName.length() > 0 ? #strings.substring(employee.firstName,0,1) : 'U'}"></span>
+                        </div>
+
+                        <h5 class="fw-bold" th:text="${(employee.lastName != null ? employee.lastName : '') + ' ' + (employee.firstName != null ? employee.firstName : '')}"></h5>
+                        <p class="text-muted small mb-3" th:text="${employee.position != null ? employee.position.name : 'Посада не вказана'}"></p>
+
+                        <div class="mb-3">
+                             <span class="badge rounded-pill"
+                                   th:classappend="${employee.status == 'Активний' ? 'bg-success-subtle text-success' :
+                                                    (employee.status == 'Звільнений' ? 'bg-danger-subtle text-danger' :
+                                                    'bg-warning-subtle text-warning')}"
+                                   th:text="${employee.status}">
+                            </span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a th:href="${employee.email != null} ? 'mailto:' + ${employee.email} : '#'" class="btn btn-outline-primary btn-sm rounded-pill">
+                                <i class="bi bi-envelope-at me-2"></i>Надіслати Email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:class="${employee.id == null ? 'col-md-12' : 'col-md-9'}">
+                    <div class="card-custom p-4">
+
+                        <ul class="nav nav-tabs nav-tabs-modern mb-4" id="profileTabs" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#main" type="button">Основна інформація</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#personal" type="button">Паспортні дані</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#job" type="button">Кадрова історія</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+
+                            <div class="tab-pane fade show active" id="main">
+                                <div class="row g-3">
+
+                                    <div class="col-12 bg-light p-3 rounded mb-3 border">
+                                        <label class="form-label fw-bold"><i class="bi bi-camera-fill me-2"></i>Фото профілю</label>
+                                        <input type="file" name="avatarFile" class="form-control" accept="image/*">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-muted">Прізвище</label>
+                                        <input type="text" th:field="*{lastName}" class="form-control form-control-modern" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-muted">Ім'я</label>
+                                        <input type="text" th:field="*{firstName}" class="form-control form-control-modern" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-muted">По батькові</label>
+                                        <input type="text" th:field="*{middleName}" class="form-control form-control-modern">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-muted">Дата народження</label>
+                                        <input type="date" th:field="*{birthDate}" class="form-control form-control-modern">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-muted">Телефон</label>
+                                        <input type="text" th:field="*{phoneMain}" class="form-control form-control-modern">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-muted">Статус</label>
+                                        <select th:field="*{status}" class="form-select form-control-modern">
+                                            <option value="Активний">🟢 Активний</option>
+                                            <option value="У відпустці">🟡 У відпустці</option>
+                                            <option value="Лікарняний">🟠 Лікарняний</option>
+                                            <option value="Звільнений">🔴 Звільнений</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label small fw-bold text-muted">Email</label>
+                                        <input type="email" th:field="*{email}" class="form-control form-control-modern">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="personal">
+                                <div class="row g-3">
+
+                                    <div class="col-12 bg-light p-3 rounded mb-3 border">
+                                        <label class="form-label fw-bold text-primary">
+                                            <i class="bi bi-file-earmark-pdf-fill me-2"></i>Скан документу (Паспорт/ID)
+                                        </label>
+                                        <input type="file" name="documentFile" class="form-control" accept="application/pdf, image/*">
+                                        <div class="form-text">Завантажте скан-копію документів (PDF або Фото)</div>
+
+                                        <div th:if="${employee.id != null and not #lists.isEmpty(employee.documents)}" class="mt-2">
+                                            <hr>
+                                            <small class="text-muted">Завантажені файли:</small>
+                                            <ul class="list-unstyled mt-1">
+                                                <li th:each="doc : ${employee.documents}">
+                                                    <a th:href="@{/documents/{id}(id=${doc.id})}" target="_blank" class="text-decoration-none">
+                                                        <i class="bi bi-file-earmark-check text-success"></i>
+                                                        <span th:text="${doc.fileName}"></span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted">ІПН (Код)</label>
+                                        <input type="text" th:field="*{inn}" class="form-control form-control-modern">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted">Сімейний стан</label>
+                                        <select th:field="*{maritalStatus}" class="form-select form-control-modern">
+                                            <option value="">Не вказано</option>
+                                            <option value="Одружений/а">Одружений/а</option>
+                                            <option value="Не одружений/а">Не одружений/а</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted">Адреса прописки</label>
+                                        <input type="text" th:field="*{addressRegistration}" class="form-control form-control-modern">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted">Фактична адреса</label>
+                                        <input type="text" th:field="*{addressActual}" class="form-control form-control-modern">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="job">
+                                <div class="bg-light p-3 rounded-3 mb-4 border">
+                                    <h6 class="text-primary mb-3"><i class="bi bi-briefcase-fill me-2"></i>Поточне призначення</h6>
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted">Департамент</label>
+                                            <select th:field="*{department}" id="departmentSelect" class="form-select form-control-modern" onchange="filterPositions()">
+                                                <option value="" selected>Оберіть відділ...</option>
+                                                <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted">Посада</label>
+                                            <select th:field="*{position}" id="positionSelect" class="form-select form-control-modern">
+                                                <option value="" selected>Спочатку оберіть відділ</option>
+                                                <option th:each="pos : ${positions}"
+                                                        th:value="${pos.id}"
+                                                        th:text="${pos.name}"
+                                                        th:data-dept-id="${pos.department != null ? pos.department.id : '0'}">
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold text-muted">Дата найму</label>
+                                            <input type="date" th:field="*{hireDate}" class="form-control form-control-modern">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h6 class="fw-bold mb-3" th:if="${employee.id != null}">Історія переміщень</h6>
+                                <table class="table table-bordered table-sm small" th:if="${employee.id != null}">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Тип події</th>
+                                        <th>Посада</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="history : ${employee.jobHistory}">
+                                        <td th:text="${history.startDate}"></td>
+                                        <td><span class="badge bg-info text-dark" th:text="${history.eventType}"></span></td>
+                                        <td th:text="${history.position != null ? history.position.name : '-'}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function filterPositions() {
+        const selectedDeptId = document.getElementById('departmentSelect').value;
+        const positionSelect = document.getElementById('positionSelect');
+        const options = positionSelect.querySelectorAll('option');
+
+        positionSelect.value = "";
+
+        options.forEach(option => {
+            const posDeptId = option.getAttribute('data-dept-id');
+            if (!posDeptId || posDeptId === selectedDeptId) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
