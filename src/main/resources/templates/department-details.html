@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Налаштування відділу</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-brand"><i class="bi bi-rocket-takeoff-fill me-2"></i> HR System</div>
+    <ul class="nav flex-column">
+        <li class="nav-item"><a href="/employees" class="nav-link"><i class="bi bi-people-fill"></i> Співробітники</a></li>
+        <li class="nav-item"><a href="/departments" class="nav-link active"><i class="bi bi-building"></i> Відділи</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="container-fluid animate-fade-up" style="max-width: 800px; margin: 0 auto;">
+
+        <form th:action="@{/departments/save}" th:object="${department}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <a href="/departments" class="btn btn-light rounded-circle me-3" style="width: 40px; height: 40px;"><i class="bi bi-arrow-left"></i></a>
+                    <div>
+                        <h4 class="m-0 fw-bold" th:text="${department.id == null ? 'Новий відділ' : 'Редагування відділу'}"></h4>
+                        <span class="text-muted small">Налаштування структурного підрозділу</span>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary-modern px-5">
+                        <i class="bi bi-check2-circle me-2"></i>Зберегти
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-custom p-4">
+                <div class="row g-4">
+                    <div class="col-md-12">
+                        <label class="form-label small fw-bold text-muted">Назва відділу</label>
+                        <input type="text" th:field="*{name}" class="form-control form-control-modern" placeholder="Наприклад: IT Відділ" required>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label small fw-bold text-muted">Опис діяльності</label>
+                        <textarea th:field="*{description}" class="form-control form-control-modern" rows="4" placeholder="Чим займається цей відділ..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -186,20 +186,25 @@
 
                                         <div class="col-md-6">
                                             <label class="form-label small fw-bold text-muted">Департамент</label>
-                                            <select th:field="*{department}" id="departmentSelect" class="form-select form-control-modern" onchange="filterPositions()">
-                                                <option value="" selected>Оберіть відділ...</option>
-                                                <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
+                                            <select name="departmentId" id="departmentSelect" class="form-select form-control-modern" onchange="filterPositions()">
+                                                <option value="">Оберіть відділ...</option>
+                                                <option th:each="dept : ${departments}"
+                                                        th:value="${dept.id}"
+                                                        th:text="${dept.name}"
+                                                        th:selected="${employee.department != null and employee.department.id == dept.id}">
+                                                </option>
                                             </select>
                                         </div>
 
                                         <div class="col-md-6">
                                             <label class="form-label small fw-bold text-muted">Посада</label>
-                                            <select th:field="*{position}" id="positionSelect" class="form-select form-control-modern">
-                                                <option value="" selected>Спочатку оберіть відділ</option>
+                                            <select name="positionId" id="positionSelect" class="form-select form-control-modern">
+                                                <option value="">Спочатку оберіть відділ</option>
                                                 <option th:each="pos : ${positions}"
                                                         th:value="${pos.id}"
                                                         th:text="${pos.name}"
-                                                        th:data-dept-id="${pos.department != null ? pos.department.id : '0'}">
+                                                        th:data-dept-id="${pos.department != null ? pos.department.id : '0'}"
+                                                        th:selected="${employee.position != null and employee.position.id == pos.id}">
                                                 </option>
                                             </select>
                                         </div>

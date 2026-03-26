@@ -66,37 +66,41 @@ public class EmployeeController {
         return "employee-details";
     }
 
-    // 4. ДІЯ: Збереження
     @PostMapping("/employees/save")
     public String saveEmployee(@ModelAttribute("employee") Employee employee,
+                               @RequestParam(value = "departmentId", required = false) Integer departmentId,
+                               @RequestParam(value = "positionId", required = false) Integer positionId,
                                @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
-                               @RequestParam(value = "documentFile", required = false) MultipartFile documentFile) throws IOException { // Додали documentFile
+                               @RequestParam(value = "documentFile", required = false) MultipartFile documentFile) throws IOException {
 
-        // 1. Обробка АВАТАРКИ
+        if (departmentId != null) {
+            employee.setDepartment(departmentRepository.findById(departmentId).orElse(null));
+        } else {
+            employee.setDepartment(null);
+        }
+
+        if (positionId != null) {
+            employee.setPosition(positionRepository.findById(positionId).orElse(null));
+        } else {
+            employee.setPosition(null);
+        }
+
         if (avatarFile != null && !avatarFile.isEmpty()) {
             employee.setAvatar(avatarFile.getBytes());
         } else if (employee.getId() != null) {
-            // Зберігаємо старе фото при редагуванні
             Employee oldVersion = employeeService.findById(employee.getId());
             if (oldVersion != null) {
                 employee.setAvatar(oldVersion.getAvatar());
             }
         }
 
-        // 2. Спочатку зберігаємо співробітника (щоб отримати ID)
         employeeService.save(employee);
 
-        // 3. Обробка ДОКУМЕНТА (PDF)
         if (documentFile != null && !documentFile.isEmpty()) {
             Document doc = new Document();
             doc.setFileName(documentFile.getOriginalFilename());
             doc.setFileType(documentFile.getContentType());
             doc.setData(documentFile.getBytes());
-
-            // Отримуємо вже збереженого співробітника з бази (з ID)
-            // Важливо: employeeService.save() міг не повернути об'єкт з ID, тому краще знайти його
-            // Але в нашому випадку об'єкт employee оновився.
-
             doc.setEmployee(employee);
             documentRepository.save(doc);
         }
@@ -134,17 +138,15 @@ public class EmployeeController {
                 .body(doc.getData());
     }
 
-    // Сторінка відділів (поки що використовуємо той самий список, або створи окремий html)
-    @GetMapping("/departments")
-    public String listDepartments(Model model) {
-        model.addAttribute("departments", departmentRepository.findAll());
-        return "departments"; // Треба буде створити departments.html, або поки поверни "employees"
-    }
 
-    // Заглушка для виходу (повертає на головну)
-    @GetMapping("/logout")
-    public String logout() {
-        return "redirect:/employees";
+
+
+
+    @GetMapping("/employees/search")
+    public String searchEmployees(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+        model.addAttribute("employees", employeeService.searchByNameOrLastName(keyword));
+        model.addAttribute("keyword", keyword);
+        return "employees";
     }
 
 }

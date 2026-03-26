@@ -5,7 +5,7 @@
     <title>HR Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/style.css(v=2.0)}">
 </head>
 <body>
 
@@ -25,7 +25,7 @@
             </a>
         </li>
         <li class="nav-item mt-5">
-            <a href="#" class="nav-link text-danger">
+            <a th:href="@{/logout}" class="nav-link text-danger">
                 <i class="bi bi-box-arrow-left"></i> Вихід
             </a>
         </li>
@@ -35,14 +35,31 @@
 <div class="main-content">
     <div class="container-fluid animate-fade-up">
 
-        <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="top-bar mb-4">
             <div>
-                <h2 class="fw-bold text-dark">Команда</h2>
-                <p class="text-muted">Управління персоналом та моніторинг</p>
+                <h2 class="fw-bold text-dark mb-1">Команда</h2>
+                <p class="text-muted mb-0">Управління персоналом та моніторинг</p>
             </div>
-            <a href="/employees/new" class="btn btn-primary-modern">
-                <i class="bi bi-plus-lg me-2"></i>Додати співробітника
-            </a>
+
+            <div class="top-actions">
+                <form th:action="@{/employees/search}" method="get" class="search-form">
+                    <div class="search-box">
+                        <i class="bi bi-search search-icon"></i>
+
+                        <input type="text"
+                               name="keyword"
+                               th:value="${keyword}"
+                               placeholder="Пошук по імені або прізвищу...">
+
+                        <button type="submit" class="btn-search">Пошук</button>
+                        <a th:href="@{/employees}" class="btn-reset">Скинути</a>
+                    </div>
+                </form>
+
+                <a href="/employees/new" class="btn btn-primary-modern">
+                    <i class="bi bi-plus-lg me-2"></i>Додати співробітника
+                </a>
+            </div>
         </div>
 
         <div class="card-custom p-4 animate-fade-up animate-delay-1">
@@ -62,21 +79,32 @@
                     <tr th:each="employee : ${employees}">
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="avatar-circle me-3" style="width: 45px; height: 45px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                                    <img th:if="${employee.avatar != null}" th:src="'data:image/jpeg;base64,' + ${employee.getAvatarBase64()}" style="width: 100%; height: 100%; object-fit: cover;">
-                                    <span th:if="${employee.avatar == null}" th:text="${employee.firstName != null && employee.firstName.length() > 0 ? employee.firstName.substring(0,1) : '?'}"></span>
+                                <div class="avatar-circle me-3"
+                                     style="width: 45px; height: 45px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <img th:if="${employee.avatar != null}"
+                                         th:src="'data:image/jpeg;base64,' + ${employee.getAvatarBase64()}"
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                    <span th:if="${employee.avatar == null}"
+                                          th:text="${employee.firstName != null && employee.firstName.length() > 0 ? employee.firstName.substring(0,1) : '?'}"></span>
                                 </div>
                                 <div>
-                                    <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="text-decoration-none text-dark fw-bold stretched-link">
+                                    <a th:href="@{/employees/edit/{id}(id=${employee.id})}"
+                                       class="text-decoration-none text-dark fw-bold">
                                         <span th:text="${employee.lastName + ' ' + employee.firstName}"></span>
                                     </a>
                                     <div class="small text-muted" th:text="${employee.email}"></div>
                                 </div>
                             </div>
                         </td>
-                        <td><span class="badge bg-light text-dark border" th:text="${employee.position != null ? employee.position.name : '-'}"></span></td>
+
+                        <td>
+                            <span class="badge bg-light text-dark border"
+                                  th:text="${employee.position != null ? employee.position.name : '-'}"></span>
+                        </td>
+
                         <td th:text="${employee.department != null ? employee.department.name : '-'}"></td>
-                        <td th:text="${employee.phoneMain}"></td>
+
+                        <td th:text="${employee.phoneMain != null ? employee.phoneMain : '-'}"></td>
 
                         <td>
                             <span class="badge rounded-pill px-3 py-2"
@@ -88,9 +116,16 @@
                             </span>
                         </td>
 
-                        <td class="text-end" style="position: relative; z-index: 20;">
-                            <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="btn btn-sm btn-light text-primary me-1"><i class="bi bi-pencil-fill"></i></a>
-                            <a th:href="@{/employees/delete/{id}(id=${employee.id})}" class="btn btn-sm btn-light text-danger" onclick="return confirm('Видалити?')"><i class="bi bi-trash3-fill"></i></a>
+                        <td class="text-end">
+                            <a th:href="@{/employees/edit/{id}(id=${employee.id})}"
+                               class="btn btn-sm btn-light text-primary me-1">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a th:href="@{/employees/delete/{id}(id=${employee.id})}"
+                               class="btn btn-sm btn-light text-danger"
+                               onclick="return confirm('Видалити?')">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
                         </td>
                     </tr>
                     </tbody>
@@ -98,8 +133,9 @@
             </div>
 
             <div th:if="${employees.empty}" class="text-center py-5">
-                <i class="bi bi-inbox fs-1 text-muted"></i>
-                <p class="text-muted mt-3">Список співробітників порожній</p>
+                <i class="bi bi-search fs-1 text-muted"></i>
+                <p class="text-muted mt-3 mb-1">Нічого не знайдено</p>
+                <p class="text-muted small">Спробуйте змінити ім'я або прізвище для пошуку</p>
             </div>
         </div>
     </div>
