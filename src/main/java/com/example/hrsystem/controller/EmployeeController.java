@@ -4,149 +4,155 @@ import com.example.hrsystem.entity.Document;
 import com.example.hrsystem.entity.Employee;
 import com.example.hrsystem.repository.DepartmentRepository;
 import com.example.hrsystem.repository.DocumentRepository;
-import com.example.hrsystem.repository.EmployeeRepository;
 import com.example.hrsystem.repository.PositionRepository;
 import com.example.hrsystem.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.time.LocalDate;
 
 @Controller
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final DepartmentRepository departmentRepository;
+    private final PositionRepository positionRepository;
+    private final DocumentRepository documentRepository;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
-    private PositionRepository positionRepository;
-
-    @Autowired
-    private DocumentRepository documentRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService,
+                              DepartmentRepository departmentRepository,
+                              PositionRepository positionRepository,
+                              DocumentRepository documentRepository) {
         this.employeeService = employeeService;
+        this.departmentRepository = departmentRepository;
+        this.positionRepository = positionRepository;
+        this.documentRepository = documentRepository;
     }
 
-    // 1. Головна сторінка (Список)
-    @GetMapping("/employees")
-    public String listEmployees(Model model) {
-        model.addAttribute("employees", employeeService.findAll());
-        return "employees";
-    }
-
-    // 2. СТОРІНКА: Додати нового (ОСЬ ЦЬОГО МЕТОДУ НЕ ВИСТАЧАЛО!)
-    @GetMapping("/employees/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("employee", new Employee());
-        // Завантажуємо списки відділів та посад для випадаючих списків
-        model.addAttribute("departments", departmentRepository.findAll());
-        model.addAttribute("positions", positionRepository.findAll());
-        return "employee-details"; // Посилається на твій файл employee-details.html
-    }
-
-    // 3. СТОРІНКА: Редагувати існуючого
-    @GetMapping("/employees/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Employee employee = employeeService.findById(id);
-        model.addAttribute("employee", employee);
-        model.addAttribute("departments", departmentRepository.findAll());
-        model.addAttribute("positions", positionRepository.findAll());
-        return "employee-details";
-    }
-
-    @PostMapping("/employees/save")
-    public String saveEmployee(@ModelAttribute("employee") Employee employee,
-                               @RequestParam(value = "departmentId", required = false) Integer departmentId,
-                               @RequestParam(value = "positionId", required = false) Integer positionId,
-                               @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
-                               @RequestParam(value = "documentFile", required = false) MultipartFile documentFile) throws IOException {
-
-        if (departmentId != null) {
-            employee.setDepartment(departmentRepository.findById(departmentId).orElse(null));
-        } else {
-            employee.setDepartment(null);
-        }
-
-        if (positionId != null) {
-            employee.setPosition(positionRepository.findById(positionId).orElse(null));
-        } else {
-            employee.setPosition(null);
-        }
-
-        if (avatarFile != null && !avatarFile.isEmpty()) {
-            employee.setAvatar(avatarFile.getBytes());
-        } else if (employee.getId() != null) {
-            Employee oldVersion = employeeService.findById(employee.getId());
-            if (oldVersion != null) {
-                employee.setAvatar(oldVersion.getAvatar());
-            }
-        }
-
-        employeeService.save(employee);
-
-        if (documentFile != null && !documentFile.isEmpty()) {
-            Document doc = new Document();
-            doc.setFileName(documentFile.getOriginalFilename());
-            doc.setFileType(documentFile.getContentType());
-            doc.setData(documentFile.getBytes());
-            doc.setEmployee(employee);
-            documentRepository.save(doc);
-        }
-
-        return "redirect:/employees";
-    }
-
-    // 5. ДІЯ: Видалення
-    @GetMapping("/employees/delete/{id}")
-    public String deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteEmployeeById(id);
-        return "redirect:/employees";
-    }
-
-    // --- Робота з документами ---
-
-    @PostMapping("/employees/{id}/upload")
-    public String uploadFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
-        Employee employee = employeeRepository.findById(id).orElseThrow();
-        Document doc = new Document();
-        doc.setFileName(file.getOriginalFilename());
-        doc.setFileType(file.getContentType());
-        doc.setData(file.getBytes());
-        doc.setEmployee(employee);
-        documentRepository.save(doc);
-        return "redirect:/employees/edit/" + id;
-    }
-
-    @GetMapping("/documents/{id}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable Long id) {
-        Document doc = documentRepository.findById(id).orElseThrow();
-        return ResponseEntity.ok()
-                .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + doc.getFileName() + "\"")
-                .body(doc.getData());
-    }
-
-
-
-
-
-    @GetMapping("/employees/search")
-    public String searchEmployees(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-        model.addAttribute("employees", employeeService.searchByNameOrLastName(keyword));
+    @GetMapping({"/employees", "/employees/search"})
+    public String listEmployees(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+        model.addAttribute("employees", employeeService.findAll(keyword));
         model.addAttribute("keyword", keyword);
         return "employees";
     }
 
+    @GetMapping("/employees/new")
+    public String showCreateForm(Model model) {
+        populateFormModel(model, employeeService.createEmptyEmployee());
+        return "employee-details";
+    }
+
+    @GetMapping({"/employees/edit/{id}", "/employees/{id}"})
+    public String showEditForm(@PathVariable Long id, Model model) {
+        populateFormModel(model, employeeService.findById(id));
+        return "employee-details";
+    }
+
+    @PostMapping("/employees/save")
+    public String saveEmployee(@Valid @ModelAttribute("employee") Employee employee,
+                               BindingResult bindingResult,
+                               @RequestParam(value = "departmentId", required = false) Integer departmentId,
+                               @RequestParam(value = "positionId", required = false) Integer positionId,
+                               @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+                               @RequestParam(value = "documentFile", required = false) MultipartFile documentFile,
+                               Model model,
+                               RedirectAttributes redirectAttributes) throws IOException {
+        if (bindingResult.hasErrors()) {
+            applySelections(employee, departmentId, positionId);
+            populateFormModel(model, employee);
+            return "employee-details";
+        }
+
+        try {
+            Employee savedEmployee = employeeService.saveEmployee(employee, departmentId, positionId, avatarFile, documentFile);
+            redirectAttributes.addFlashAttribute("successMessage", "Дані працівника успішно збережено.");
+            return "redirect:/employees/edit/" + savedEmployee.getId();
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            bindingResult.reject("saveError", ex.getMessage());
+            applySelections(employee, departmentId, positionId);
+            populateFormModel(model, employee);
+            return "employee-details";
+        }
+    }
+
+    @PostMapping("/employees/{id}/dismiss")
+    public String dismissEmployee(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        employeeService.dismissEmployee(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Працівника позначено як звільненого.");
+        return "redirect:/employees/edit/" + id;
+    }
+
+    @PostMapping("/employees/{id}/delete")
+    public String deleteEmployee(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return performDelete(id, redirectAttributes);
+    }
+
+    @GetMapping("/employees/delete/{id}")
+    public String deleteEmployeeLegacy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return performDelete(id, redirectAttributes);
+    }
+
+    private String performDelete(Long id, RedirectAttributes redirectAttributes) {
+        try {
+            employeeService.deleteEmployeeById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Працівника видалено.");
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return "redirect:/employees";
+    }
+
+    @GetMapping("/documents/{id}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable Long id) {
+        Document document = documentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Документ не знайдено."));
+
+        MediaType mediaType;
+        try {
+            mediaType = document.getFileType() != null
+                    ? MediaType.parseMediaType(document.getFileType())
+                    : MediaType.APPLICATION_OCTET_STREAM;
+        } catch (IllegalArgumentException ex) {
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+
+        boolean inlineView = mediaType.isCompatibleWith(MediaType.APPLICATION_PDF)
+                || "image".equalsIgnoreCase(mediaType.getType());
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        (inlineView ? "inline" : "attachment") + "; filename=\"" + document.getFileName() + "\""
+                )
+                .body(document.getData());
+    }
+
+    private void populateFormModel(Model model, Employee employee) {
+        model.addAttribute("employee", employee);
+        model.addAttribute("departments", departmentRepository.findAllByOrderByNameAsc());
+        model.addAttribute("positions", positionRepository.findAllByOrderByNameAsc());
+        model.addAttribute("statuses", employeeService.getAvailableStatuses());
+    }
+
+    private void applySelections(Employee employee, Integer departmentId, Integer positionId) {
+        employee.setDepartment(
+                departmentId != null ? departmentRepository.findById(departmentId).orElse(null) : null
+        );
+        employee.setPosition(
+                positionId != null ? positionRepository.findById(positionId).orElse(null) : null
+        );
+    }
 }

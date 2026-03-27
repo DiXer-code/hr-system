@@ -1,75 +1,108 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>HR Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/style.css(v=2.0)}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Працівники | HR System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
 </head>
 <body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-people-fill"></i>
+            <span>HR System</span>
+        </div>
 
-<div class="sidebar">
-    <div class="sidebar-brand">
-        <i class="bi bi-rocket-takeoff-fill me-2"></i> HR System
-    </div>
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a href="/employees" class="nav-link active">
-                <i class="bi bi-people-fill"></i> Співробітники
+        <nav class="sidebar-nav">
+            <a class="nav-link-app active" th:href="@{/employees}">
+                <i class="bi bi-people-fill"></i>
+                <span>Працівники</span>
             </a>
-        </li>
-        <li class="nav-item">
-            <a href="/departments" class="nav-link">
-                <i class="bi bi-building"></i> Відділи
+            <a class="nav-link-app" th:href="@{/departments}">
+                <i class="bi bi-building"></i>
+                <span>Департаменти</span>
             </a>
-        </li>
-        <li class="nav-item mt-5">
-            <a th:href="@{/logout}" class="nav-link text-danger">
-                <i class="bi bi-box-arrow-left"></i> Вихід
+            <a class="nav-link-app nav-danger" th:href="@{/logout}">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Вийти</span>
             </a>
-        </li>
-    </ul>
-</div>
+        </nav>
 
-<div class="main-content">
-    <div class="container-fluid animate-fade-up">
+        <div class="sidebar-footer" th:if="${session.AUTH_USER != null}">
+            Увійшли як <strong th:text="${session.AUTH_USER}"></strong>
+        </div>
+    </aside>
 
-        <div class="top-bar mb-4">
+    <main class="main-content">
+        <header class="page-header">
             <div>
-                <h2 class="fw-bold text-dark mb-1">Команда</h2>
-                <p class="text-muted mb-0">Управління персоналом та моніторинг</p>
+                <h1 class="page-title">Команда</h1>
+                <p class="page-subtitle">Пошук, перегляд і кадрові дії для працівників у єдиному робочому просторі.</p>
             </div>
 
-            <div class="top-actions">
-                <form th:action="@{/employees/search}" method="get" class="search-form">
+            <div class="toolbar">
+                <form class="search-form" th:action="@{/employees}" method="get">
                     <div class="search-box">
                         <i class="bi bi-search search-icon"></i>
-
-                        <input type="text"
-                               name="keyword"
-                               th:value="${keyword}"
-                               placeholder="Пошук по імені або прізвищу...">
-
-                        <button type="submit" class="btn-search">Пошук</button>
-                        <a th:href="@{/employees}" class="btn-reset">Скинути</a>
+                        <input type="text" name="keyword" th:value="${keyword}" placeholder="Пошук за ім'ям або прізвищем">
+                        <button type="submit" class="btn-search">Знайти</button>
+                        <a class="btn-reset" th:href="@{/employees}">Скинути</a>
                     </div>
                 </form>
 
-                <a href="/employees/new" class="btn btn-primary-modern">
-                    <i class="bi bi-plus-lg me-2"></i>Додати співробітника
+                <a class="btn-primary-modern" th:href="@{/employees/new}">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Додати працівника</span>
                 </a>
+            </div>
+        </header>
+
+        <div class="alert-stack" th:if="${successMessage != null or errorMessage != null}">
+            <div class="alert-card success" th:if="${successMessage != null}">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div class="alert-card error" th:if="${errorMessage != null}">
+                <i class="bi bi-exclamation-octagon-fill"></i>
+                <span th:text="${errorMessage}"></span>
             </div>
         </div>
 
-        <div class="card-custom p-4 animate-fade-up animate-delay-1">
-            <div class="table-responsive">
+        <section class="stats-grid">
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-people"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${#lists.size(employees)}">0</p>
+                    <p class="stat-label">Усього працівників</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-person-check"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${#lists.size(employees.?[status == 'Активний'])}">0</p>
+                    <p class="stat-label">Активні зараз</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-calendar-heart"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${#lists.size(employees.?[status == 'У відпустці']) + #lists.size(employees.?[status == 'Лікарняний'])}">0</p>
+                    <p class="stat-label">Поза робочим місцем</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="card-custom table-card">
+            <div class="table-responsive" th:if="${not #lists.isEmpty(employees)}">
                 <table class="table-modern">
                     <thead>
                     <tr>
-                        <th>Співробітник</th>
-                        <th>Посада</th>
+                        <th>Працівник</th>
                         <th>Департамент</th>
+                        <th>Посада</th>
                         <th>Контакти</th>
                         <th>Статус</th>
                         <th class="text-end">Дії</th>
@@ -78,69 +111,61 @@
                     <tbody>
                     <tr th:each="employee : ${employees}">
                         <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle me-3"
-                                     style="width: 45px; height: 45px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                                    <img th:if="${employee.avatar != null}"
-                                         th:src="'data:image/jpeg;base64,' + ${employee.getAvatarBase64()}"
-                                         style="width: 100%; height: 100%; object-fit: cover;">
-                                    <span th:if="${employee.avatar == null}"
-                                          th:text="${employee.firstName != null && employee.firstName.length() > 0 ? employee.firstName.substring(0,1) : '?'}"></span>
+                            <div class="employee-cell">
+                                <div class="avatar">
+                                    <img th:if="${employee.avatarDataUri != null}" th:src="${employee.avatarDataUri}" alt="Avatar">
+                                    <span th:if="${employee.avatarDataUri == null}" th:text="${employee.initials}">HR</span>
                                 </div>
                                 <div>
-                                    <a th:href="@{/employees/edit/{id}(id=${employee.id})}"
-                                       class="text-decoration-none text-dark fw-bold">
-                                        <span th:text="${employee.lastName + ' ' + employee.firstName}"></span>
-                                    </a>
-                                    <div class="small text-muted" th:text="${employee.email}"></div>
+                                    <a class="employee-name" th:href="@{/employees/edit/{id}(id=${employee.id})}" th:text="${employee.fullName}">Ім'я Прізвище</a>
+                                    <div class="employee-meta" th:text="${employee.email != null ? employee.email : 'Email не вказано'}"></div>
                                 </div>
                             </div>
                         </td>
-
+                        <td th:text="${employee.department != null ? employee.department.name : 'Не вказано'}">Не вказано</td>
+                        <td th:text="${employee.position != null ? employee.position.name : 'Не вказано'}">Не вказано</td>
                         <td>
-                            <span class="badge bg-light text-dark border"
-                                  th:text="${employee.position != null ? employee.position.name : '-'}"></span>
+                            <div class="muted-line" th:text="${employee.phoneMain != null ? employee.phoneMain : 'Телефон не вказано'}"></div>
+                            <div class="muted-line" th:text="${employee.phoneWork != null ? employee.phoneWork : 'Робочий номер не вказано'}"></div>
                         </td>
-
-                        <td th:text="${employee.department != null ? employee.department.name : '-'}"></td>
-
-                        <td th:text="${employee.phoneMain != null ? employee.phoneMain : '-'}"></td>
-
                         <td>
-                            <span class="badge rounded-pill px-3 py-2"
-                                  th:classappend="${employee.status == 'Активний' ? 'bg-success-subtle text-success' :
-                                                   (employee.status == 'Звільнений' ? 'bg-danger-subtle text-danger' :
-                                                   (employee.status == 'У відпустці' ? 'bg-warning-subtle text-warning' :
-                                                   (employee.status == 'Лікарняний' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary')))}"
+                            <span class="status-badge"
+                                  th:classappend="${employee.status == null || employee.status == 'Активний'} ? ' status-active' : (${employee.status == 'У відпустці'} ? ' status-vacation' : (${employee.status == 'Лікарняний'} ? ' status-sick' : ' status-dismissed'))"
                                   th:text="${employee.status != null ? employee.status : 'Активний'}">
+                                Активний
                             </span>
                         </td>
+                        <td>
+                            <div class="actions-row">
+                                <a class="btn-icon" th:href="@{/employees/edit/{id}(id=${employee.id})}" title="Редагувати">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
 
-                        <td class="text-end">
-                            <a th:href="@{/employees/edit/{id}(id=${employee.id})}"
-                               class="btn btn-sm btn-light text-primary me-1">
-                                <i class="bi bi-pencil-fill"></i>
-                            </a>
-                            <a th:href="@{/employees/delete/{id}(id=${employee.id})}"
-                               class="btn btn-sm btn-light text-danger"
-                               onclick="return confirm('Видалити?')">
-                                <i class="bi bi-trash3-fill"></i>
-                            </a>
+                                <form class="inline-form" th:if="${employee.status != 'Звільнений'}" th:action="@{/employees/{id}/dismiss(id=${employee.id})}" method="post">
+                                    <button class="btn-icon btn-warning-soft" type="submit" title="Звільнити" onclick="return confirm('Позначити працівника як звільненого?');">
+                                        <i class="bi bi-person-dash"></i>
+                                    </button>
+                                </form>
+
+                                <form class="inline-form" th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post">
+                                    <button class="btn-icon btn-danger-soft" type="submit" title="Видалити" onclick="return confirm('Видалити працівника?');">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div th:if="${employees.empty}" class="text-center py-5">
-                <i class="bi bi-search fs-1 text-muted"></i>
-                <p class="text-muted mt-3 mb-1">Нічого не знайдено</p>
-                <p class="text-muted small">Спробуйте змінити ім'я або прізвище для пошуку</p>
+            <div class="empty-state" th:if="${#lists.isEmpty(employees)}">
+                <i class="bi bi-search"></i>
+                <h3>Нічого не знайдено</h3>
+                <p>Спробуйте змінити пошуковий запит або додайте нового працівника.</p>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

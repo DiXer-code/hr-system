@@ -1,11 +1,21 @@
 package com.example.hrsystem.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import java.time.LocalDate;
-import java.math.BigDecimal; // Не забудь цей імпорт!
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "JobHistory")
 public class JobHistory {
@@ -13,8 +23,8 @@ public class JobHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
     @ManyToOne
@@ -27,10 +37,6 @@ public class JobHistory {
 
     private LocalDate startDate;
     private LocalDate endDate;
-
-    // --- Додаємо поля, яких не вистачало на скріншоті ---
-
-    private BigDecimal personalSalary; // Індивідуальна зарплата
-
-    private String eventType; // Тип події: "HIRE", "TRANSFER", "DISMISS"
+    private BigDecimal personalSalary;
+    private String eventType;
 }

@@ -1,36 +1,61 @@
 package com.example.hrsystem.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "Employee")
 public class Employee {
+    public static final String STATUS_ACTIVE = "Активний";
+    public static final String STATUS_ON_VACATION = "У відпустці";
+    public static final String STATUS_DISMISSED = "Звільнений";
+    public static final String STATUS_ON_SICK_LEAVE = "Лікарняний";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Основна інформація
+    @NotBlank(message = "Вкажіть ім'я")
     private String firstName;
-    private String lastName;
-    private String middleName; // По батькові (є на скрінах)
 
-    private String gender; // "Чоловіча"/"Жіноча"
-    private String maritalStatus; // "Одружений/а" тощо
+    @NotBlank(message = "Вкажіть прізвище")
+    private String lastName;
+
+    private String middleName;
+    private String gender;
+    private String maritalStatus;
 
     @Column(unique = true)
-    private String inn; // ІПН (важливо для HR)
+    private String inn;
 
-    private String addressRegistration; // Адреса прописки
-    private String addressActual;       // Фактична адреса
+    private String addressRegistration;
+    private String addressActual;
 
+    @Email(message = "Вкажіть коректний email")
     private String email;
+
     private String phoneMain;
     private String phoneWork;
 
@@ -40,7 +65,6 @@ public class Employee {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate hireDate;
 
-    // Поточний стан (для швидкого доступу)
     @ManyToOne
     @JoinColumn(name = "current_department_id")
     private Department department;
@@ -49,41 +73,73 @@ public class Employee {
     @JoinColumn(name = "current_position_id")
     private Position position;
 
-    // Зв'язки
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id DESC")
     private List<Document> documents = new ArrayList<>();
 
-    // НОВЕ: Історія роботи (призначення, переведення)
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("startDate DESC, id DESC")
     private List<JobHistory> jobHistory = new ArrayList<>();
 
-    // НОВЕ: Освіта
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("graduationYear DESC, id DESC")
     private List<Education> educationList = new ArrayList<>();
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dismissalDate;
 
-
-    // Поле для фотографії
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] avatar;
 
-    // Допоміжний метод для HTML (перетворює байти в картинку)
+    private String avatarContentType;
+
+    @Column(nullable = false)
+    private String status = STATUS_ACTIVE;
+
     public String getAvatarBase64() {
-        if (avatar == null) return null;
-        return java.util.Base64.getEncoder().encodeToString(avatar);
+        if (avatar == null) {
+            return null;
+        }
+        return Base64.getEncoder().encodeToString(avatar);
     }
 
-    // Додай ось це поле
-    private String status = "Активний"; // Значення за замовчуванням
-
-    // ... геттери і сеттери ...
-    public String getStatus() {
-        return status;
+    public String getAvatarDataUri() {
+        if (avatar == null) {
+            return null;
+        }
+        String contentType = (avatarContentType == null || avatarContentType.isBlank())
+                ? "image/jpeg"
+                : avatarContentType;
+        return "data:" + contentType + ";base64," + getAvatarBase64();
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getFullName() {
+        StringBuilder builder = new StringBuilder();
+        appendPart(builder, lastName);
+        appendPart(builder, firstName);
+        appendPart(builder, middleName);
+        return builder.length() == 0 ? "Без імені" : builder.toString();
+    }
+
+    public String getInitials() {
+        String firstInitial = firstName != null && !firstName.isBlank()
+                ? firstName.substring(0, 1).toUpperCase()
+                : "";
+        String lastInitial = lastName != null && !lastName.isBlank()
+                ? lastName.substring(0, 1).toUpperCase()
+                : "";
+        String initials = firstInitial + lastInitial;
+        return initials.isBlank() ? "HR" : initials;
+    }
+
+    private void appendPart(StringBuilder builder, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        if (builder.length() > 0) {
+            builder.append(' ');
+        }
+        builder.append(value.trim());
     }
 }

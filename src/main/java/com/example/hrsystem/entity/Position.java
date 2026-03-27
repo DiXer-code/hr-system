@@ -1,10 +1,19 @@
 package com.example.hrsystem.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "Position")
 public class Position {
@@ -13,10 +22,8 @@ public class Position {
     private Integer id;
 
     private String name;
-
     private BigDecimal salary;
 
-    // Зв'язок: Посада прив'язана до Відділу
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
