@@ -3,20 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${employee.id == null ? 'Новий працівник' : employee.fullName} + ' | HR System'">Працівник | HR System</title>
+    <title th:text="${(employee.id == null ? 'Новий працівник' : employee.fullName) + ' | Кадровий реєстр'}">Працівник | Кадровий реєстр</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
+    <link rel="stylesheet" th:href="@{/style.css(v=4.0)}">
 </head>
 <body>
 <div class="app-shell">
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <i class="bi bi-people-fill"></i>
-            <span>HR System</span>
+            <i class="bi bi-journal-richtext"></i>
+            <div>
+                <p class="brand-caption">People operations</p>
+                <p class="brand-title">Кадровий реєстр</p>
+            </div>
         </div>
 
+        <div class="sidebar-badge">Форма ведення особової картки, документів та кадрового руху.</div>
+
         <nav class="sidebar-nav">
+            <a class="nav-link-app" th:href="@{/reports}">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Огляд та звіти</span>
+            </a>
             <a class="nav-link-app active" th:href="@{/employees}">
                 <i class="bi bi-people-fill"></i>
                 <span>Працівники</span>
@@ -32,7 +41,8 @@
         </nav>
 
         <div class="sidebar-footer" th:if="${session.AUTH_USER != null}">
-            Увійшли як <strong th:text="${session.AUTH_USER}"></strong>
+            Увійшли як <strong th:text="${session.AUTH_USER}"></strong><br>
+            Використовуйте картку для найму, переведення, звільнення та архіву документів.
         </div>
     </aside>
 
@@ -43,17 +53,16 @@
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <div>
+                    <p class="page-eyebrow">Особова картка</p>
                     <h1 class="page-title" th:text="${employee.id == null ? 'Новий працівник' : employee.fullName}">Новий працівник</h1>
-                    <p class="page-subtitle">
-                        Заповніть основні, паспортні та кадрові дані. Історія переведень формується автоматично.
-                    </p>
+                    <p class="page-subtitle">Заповніть персональні дані, кадрові реквізити та документи. Історія руху по посаді формується автоматично під час збереження.</p>
                 </div>
             </div>
 
             <div class="toolbar-actions">
                 <button class="btn-primary-modern" type="submit" form="employeeForm">
                     <i class="bi bi-floppy"></i>
-                    <span>Зберегти</span>
+                    <span>Зберегти картку</span>
                 </button>
 
                 <form class="inline-form" th:if="${employee.id != null and employee.status != 'Звільнений'}" th:action="@{/employees/{id}/dismiss(id=${employee.id})}" method="post">
@@ -100,27 +109,29 @@
                             <span th:if="${employee.avatarDataUri == null}" th:text="${employee.initials}">HR</span>
                         </div>
 
-                        <h2 class="mt-4 mb-2" th:text="${employee.id == null ? 'Новий профіль' : employee.fullName}">Новий профіль</h2>
-                        <p class="page-subtitle mb-0" th:text="${employee.position != null ? employee.position.name : 'Посада ще не вибрана'}">Посада ще не вибрана</p>
+                        <h2 class="mt-4 mb-2" th:text="${employee.id == null ? 'Нова картка' : employee.fullName}">Нова картка</h2>
+                        <p class="page-subtitle mb-0" th:text="${employee.position != null ? employee.position.name : 'Посада ще не призначена'}">Посада ще не призначена</p>
 
                         <div class="mt-3">
                             <span class="status-badge"
                                   th:classappend="${employee.status == null || employee.status == 'Активний'} ? ' status-active' : (${employee.status == 'У відпустці'} ? ' status-vacation' : (${employee.status == 'Лікарняний'} ? ' status-sick' : ' status-dismissed'))"
-                                  th:text="${employee.status != null ? employee.status : 'Активний'}">Активний</span>
+                                  th:text="${employee.status != null ? employee.status : 'Активний'}">
+                                Активний
+                            </span>
                         </div>
 
                         <div class="profile-meta">
                             <div class="profile-meta-item">
                                 <strong>Департамент</strong>
-                                <div class="muted-line" th:text="${employee.department != null ? employee.department.name : 'Не вибрано'}">Не вибрано</div>
+                                <div class="muted-line" th:text="${employee.department != null ? employee.department.name : 'Не призначено'}">Не призначено</div>
                             </div>
                             <div class="profile-meta-item">
                                 <strong>Дата найму</strong>
-                                <div class="muted-line" th:text="${employee.hireDate != null ? employee.hireDate : 'Буде встановлено після збереження'}">-</div>
+                                <div class="muted-line" th:text="${employee.hireDate != null ? employee.hireDate : 'Буде задана після збереження'}">-</div>
                             </div>
                             <div class="profile-meta-item">
-                                <strong>Контакт</strong>
-                                <div class="muted-line" th:text="${employee.phoneMain != null ? employee.phoneMain : 'Номер не вказано'}">Номер не вказано</div>
+                                <strong>Основний контакт</strong>
+                                <div class="muted-line" th:text="${employee.phoneMain != null ? employee.phoneMain : 'Телефон не вказано'}">Телефон не вказано</div>
                             </div>
                         </div>
                     </div>
@@ -130,16 +141,16 @@
                     <article class="card-custom section-card">
                         <div class="section-heading">
                             <div>
-                                <h3 class="section-title">Основна інформація</h3>
-                                <p class="section-subtitle">Особисті дані, контакти та поточний статус працівника.</p>
+                                <h3 class="section-title">Основні відомості</h3>
+                                <p class="section-subtitle">ПІБ, дата народження, контакти та поточний статус працівника.</p>
                             </div>
                         </div>
 
                         <div class="upload-box">
                             <div class="field-block">
-                                <label class="field-label" for="avatarFile">Аватар</label>
+                                <label class="field-label" for="avatarFile">Аватар працівника</label>
                                 <input id="avatarFile" class="form-control-modern" type="file" name="avatarFile" accept="image/*">
-                                <span class="helper-text">Підтримуються стандартні формати зображень. Поточний аватар збережеться, якщо поле лишити пустим.</span>
+                                <span class="helper-text">Підійдуть стандартні формати зображень. Якщо поле залишити порожнім, поточне фото не зміниться.</span>
                             </div>
                         </div>
 
@@ -171,6 +182,7 @@
                                     <option value="">Не вказано</option>
                                     <option value="Чоловіча">Чоловіча</option>
                                     <option value="Жіноча">Жіноча</option>
+                                    <option value="Не вказано">Не вказано</option>
                                 </select>
                             </div>
                             <div class="field-block">
@@ -202,7 +214,7 @@
                         <div class="section-heading">
                             <div>
                                 <h3 class="section-title">Паспортні та контактні дані</h3>
-                                <p class="section-subtitle">ІПН, сімейний стан, адреси та завантажені документи.</p>
+                                <p class="section-subtitle">ІПН, сімейний стан, адреси та прикріплені файли співробітника.</p>
                             </div>
                         </div>
 
@@ -217,6 +229,7 @@
                                     <option value="">Не вказано</option>
                                     <option value="Одружений/а">Одружений/а</option>
                                     <option value="Не одружений/а">Не одружений/а</option>
+                                    <option value="Не вказано">Не вказано</option>
                                 </select>
                             </div>
                         </div>
@@ -234,9 +247,9 @@
 
                         <div class="upload-box">
                             <div class="field-block">
-                                <label class="field-label" for="documentFile">Скан документа</label>
+                                <label class="field-label" for="documentFile">Файл документа</label>
                                 <input id="documentFile" class="form-control-modern" type="file" name="documentFile" accept="application/pdf,image/*">
-                                <span class="helper-text">Можна додати PDF або зображення. Існуючі файли не видаляються при збереженні.</span>
+                                <span class="helper-text">Можна прикріпити PDF або зображення. Уже завантажені документи залишаються в архіві працівника.</span>
                             </div>
 
                             <div class="documents-list" th:if="${employee.id != null and not #lists.isEmpty(employee.documents)}">
@@ -251,8 +264,8 @@
                     <article class="card-custom section-card">
                         <div class="section-heading">
                             <div>
-                                <h3 class="section-title">Кадрова інформація</h3>
-                                <p class="section-subtitle">Поточний департамент, посада, дата найму та дата звільнення.</p>
+                                <h3 class="section-title">Кадровий блок</h3>
+                                <p class="section-subtitle">Поточний департамент, посада, дата прийняття та службова інформація.</p>
                             </div>
                         </div>
 
@@ -294,7 +307,7 @@
                                 <input type="text" class="form-control-modern" readonly th:value="${employee.dismissalDate != null ? employee.dismissalDate : 'Не застосовується'}">
                             </div>
                             <div class="field-block">
-                                <label class="field-label">Поточний статус</label>
+                                <label class="field-label">Поточний стан картки</label>
                                 <input type="text" class="form-control-modern" readonly th:value="${employee.status != null ? employee.status : 'Активний'}">
                             </div>
                         </div>
@@ -303,8 +316,8 @@
                     <article class="card-custom section-card">
                         <div class="section-heading">
                             <div>
-                                <h3 class="section-title">Кадрова історія</h3>
-                                <p class="section-subtitle">Записи про прийняття, переведення та звільнення формуються автоматично.</p>
+                                <h3 class="section-title">Історія кадрових подій</h3>
+                                <p class="section-subtitle">Прийняття, переведення та звільнення зберігаються в журналі автоматично.</p>
                             </div>
                         </div>
 
@@ -325,7 +338,9 @@
                                     <td>
                                         <span class="status-badge"
                                               th:classappend="${history.eventType == 'ПРИЙНЯТТЯ'} ? ' status-active' : (${history.eventType == 'ПЕРЕВЕДЕННЯ'} ? ' status-vacation' : ' status-dismissed')"
-                                              th:text="${history.eventType}">ПРИЙНЯТТЯ</span>
+                                              th:text="${history.eventType}">
+                                            ПРИЙНЯТТЯ
+                                        </span>
                                     </td>
                                     <td th:text="${history.startDate != null ? history.startDate : '-'}">-</td>
                                     <td th:text="${history.endDate != null ? history.endDate : '-'}">-</td>
@@ -339,8 +354,8 @@
 
                         <div class="empty-state" th:if="${employee.id == null or #lists.isEmpty(employee.jobHistory)}">
                             <i class="bi bi-clock-history"></i>
-                            <h3>Історія поки порожня</h3>
-                            <p>Перший запис з'явиться після збереження працівника.</p>
+                            <h3>Історія ще порожня</h3>
+                            <p>Після першого збереження система автоматично створить перший запис про найм працівника.</p>
                         </div>
                     </article>
                 </section>

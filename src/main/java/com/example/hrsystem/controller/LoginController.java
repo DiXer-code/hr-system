@@ -23,7 +23,7 @@ public class LoginController {
                             HttpSession session,
                             Model model) {
         if (session.getAttribute(SESSION_USER) != null) {
-            return "redirect:/employees";
+            return "redirect:/reports";
         }
 
         if (logout != null) {
@@ -41,7 +41,7 @@ public class LoginController {
         if (isAuthenticatedAgainstRepository(username, password) || isDemoCredentials(username, password)) {
             session.setAttribute(SESSION_USER, username.trim());
             session.setMaxInactiveInterval(8 * 60 * 60);
-            return "redirect:/employees";
+            return "redirect:/reports";
         }
 
         model.addAttribute("error", "Невірний логін або пароль.");

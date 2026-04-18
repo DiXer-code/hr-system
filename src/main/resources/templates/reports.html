@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Огляд та звіти | Кадровий реєстр</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/style.css(v=4.0)}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-journal-richtext"></i>
+            <div>
+                <p class="brand-caption">People operations</p>
+                <p class="brand-title">Кадровий реєстр</p>
+            </div>
+        </div>
+
+        <div class="sidebar-badge">Операційна панель із аналітикою, кадровими подіями та контрольними вибірками по БД.</div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-link-app active" th:href="@{/reports}">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Огляд та звіти</span>
+            </a>
+            <a class="nav-link-app" th:href="@{/employees}">
+                <i class="bi bi-people-fill"></i>
+                <span>Працівники</span>
+            </a>
+            <a class="nav-link-app" th:href="@{/departments}">
+                <i class="bi bi-building"></i>
+                <span>Департаменти</span>
+            </a>
+            <a class="nav-link-app nav-danger" th:href="@{/logout}">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Вийти</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer" th:if="${session.AUTH_USER != null}">
+            Увійшли як <strong th:text="${session.AUTH_USER}"></strong><br>
+            Використовуйте цю панель для демонстрації запитів, звітів і стану кадрової бази.
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <p class="page-eyebrow">Аналітика</p>
+                <h1 class="page-title">Огляд HR-бази даних</h1>
+                <p class="page-subtitle">На цій сторінці зібрані ключові підсумки по персоналу, департаментах, кадрових подіях, вакансійних позиціях і поточних відпустках. Вона закриває блок “запити та звіти” в курсовому проєкті.</p>
+            </div>
+
+            <div class="toolbar-actions">
+                <a class="btn-secondary-modern" th:href="@{/departments}">
+                    <i class="bi bi-building"></i>
+                    <span>Структура</span>
+                </a>
+                <a class="btn-primary-modern" th:href="@{/employees}">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Відкрити реєстр</span>
+                </a>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-people"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${dashboard.totalEmployees}">0</p>
+                    <p class="stat-label">Карток працівників</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-person-check"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${dashboard.activeEmployees}">0</p>
+                    <p class="stat-label">Активних працівників</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-building"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${dashboard.departmentCount}">0</p>
+                    <p class="stat-label">Підрозділів у структурі</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-folder2-open"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${dashboard.documentCount}">0</p>
+                    <p class="stat-label">Файлів в архіві</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-airplane"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${dashboard.activeVacationCount}">0</p>
+                    <p class="stat-label">Активних відпусток</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                <div>
+                    <p class="stat-value" th:text="${dashboard.workedHoursLast30Days}">0</p>
+                    <p class="stat-label">Годин у табелях за 30 днів</p>
+                </div>
+            </article>
+        </section>
+
+        <div class="report-layout">
+            <section class="report-stack">
+                <article class="card-custom section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title">Звіт по департаментах</h2>
+                            <p class="section-subtitle">Агрегований кадровий склад, статуси працівників і сумарний фонд зарплати по кожному підрозділу.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" th:if="${not #lists.isEmpty(dashboard.departmentReports)}">
+                        <table class="table-modern">
+                            <thead>
+                            <tr>
+                                <th>Департамент</th>
+                                <th>Усього</th>
+                                <th>Активні</th>
+                                <th>Відпустка</th>
+                                <th>Лікарняний</th>
+                                <th>Звільнені</th>
+                                <th>Фонд зарплати</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="departmentReport : ${dashboard.departmentReports}">
+                                <td th:text="${departmentReport.departmentName}">ІТ</td>
+                                <td th:text="${departmentReport.totalEmployees}">0</td>
+                                <td th:text="${departmentReport.activeEmployees}">0</td>
+                                <td th:text="${departmentReport.vacationEmployees}">0</td>
+                                <td th:text="${departmentReport.sickLeaveEmployees}">0</td>
+                                <td th:text="${departmentReport.dismissedEmployees}">0</td>
+                                <td th:text="${departmentReport.payrollFund}">0.00</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(dashboard.departmentReports)}">
+                        <i class="bi bi-bar-chart-line"></i>
+                        <h3>Немає даних для звіту</h3>
+                        <p>Після створення працівників тут з'явиться зведена аналітика по департаментах.</p>
+                    </div>
+                </article>
+
+                <article class="card-custom section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title">Навантаження по позиціях</h2>
+                            <p class="section-subtitle">Контроль позицій із кількістю активних призначень. Нуль означає відкриту або резервну штатну одиницю.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" th:if="${not #lists.isEmpty(dashboard.positionReports)}">
+                        <table class="table-modern">
+                            <thead>
+                            <tr>
+                                <th>Департамент</th>
+                                <th>Посада</th>
+                                <th>Зарплата</th>
+                                <th>Активних призначень</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="positionReport : ${dashboard.positionReports}">
+                                <td th:text="${positionReport.departmentName}">ІТ</td>
+                                <td th:text="${positionReport.positionName}">QA Engineer</td>
+                                <td th:text="${positionReport.salary}">0.00</td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="${positionReport.assignedEmployees > 0} ? ' status-active' : ' status-vacation'"
+                                          th:text="${positionReport.assignedEmployees}">
+                                        0
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(dashboard.positionReports)}">
+                        <i class="bi bi-briefcase"></i>
+                        <h3>Позиції ще не сформовані</h3>
+                        <p>Створіть довідники департаментів і посад, щоб бачити завантаження штатних одиниць.</p>
+                    </div>
+                </article>
+            </section>
+
+            <aside class="report-stack">
+                <article class="card-custom section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title">Розподіл за статусами</h2>
+                            <p class="section-subtitle">Оперативний зріз по всіх кадрових картках.</p>
+                        </div>
+                    </div>
+
+                    <div class="report-pills">
+                        <div class="report-pill" th:each="statusReport : ${dashboard.statusReports}">
+                            <span th:text="${statusReport.status}">Активний</span>
+                            <strong th:text="${statusReport.employeeCount}">0</strong>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card-custom section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title">Останні найми</h2>
+                            <p class="section-subtitle">Працівники, у яких дата прийняття найближча до поточної.</p>
+                        </div>
+                    </div>
+
+                    <div class="mini-list" th:if="${not #lists.isEmpty(dashboard.recentHires)}">
+                        <a class="mini-list-item" th:each="employee : ${dashboard.recentHires}" th:href="@{/employees/edit/{id}(id=${employee.id})}">
+                            <span class="employee-cell">
+                                <span class="avatar">
+                                    <img th:if="${employee.avatarDataUri != null}" th:src="${employee.avatarDataUri}" alt="Avatar">
+                                    <span th:if="${employee.avatarDataUri == null}" th:text="${employee.initials}">HR</span>
+                                </span>
+                                <span>
+                                    <strong class="employee-name" th:text="${employee.fullName}">Ім'я Прізвище</strong>
+                                    <span class="employee-meta" th:text="${employee.department != null ? employee.department.name : 'Без департаменту'}">Департамент</span>
+                                </span>
+                            </span>
+                            <strong th:text="${employee.hireDate != null ? employee.hireDate : '-'}">2026-01-01</strong>
+                        </a>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(dashboard.recentHires)}">
+                        <i class="bi bi-person-plus"></i>
+                        <h3>Немає записів про найм</h3>
+                        <p>Збережіть принаймні одну картку працівника, щоб побачити цей звіт.</p>
+                    </div>
+                </article>
+
+                <article class="card-custom section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title">Поточні відпустки</h2>
+                            <p class="section-subtitle">Працівники, для яких на сьогодні є активний запис у таблиці відпусток.</p>
+                        </div>
+                    </div>
+
+                    <div class="mini-list" th:if="${not #lists.isEmpty(dashboard.activeVacations)}">
+                        <div class="mini-list-item" th:each="vacation : ${dashboard.activeVacations}">
+                            <span>
+                                <strong th:text="${vacation.employee.fullName}">Ім'я Прізвище</strong><br>
+                                <span class="employee-meta" th:text="${vacation.employee.department != null ? vacation.employee.department.name : 'Без департаменту'}">Департамент</span>
+                            </span>
+                            <span class="text-end">
+                                <strong th:text="${vacation.type != null ? vacation.type : 'Відпустка'}">Щорічна</strong><br>
+                                <span class="employee-meta" th:text="${vacation.startDate + ' - ' + vacation.endDate}">2026-01-01 - 2026-01-14</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(dashboard.activeVacations)}">
+                        <i class="bi bi-airplane"></i>
+                        <h3>Активних відпусток немає</h3>
+                        <p>Тут відображаються лише записи, які перекривають поточну дату.</p>
+                    </div>
+                </article>
+
+                <article class="card-custom section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2 class="section-title">Останні кадрові події</h2>
+                            <p class="section-subtitle">Події з журналу кадрового руху для демонстрації історії БД.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-list" th:if="${not #lists.isEmpty(dashboard.recentEvents)}">
+                        <div class="timeline-item" th:each="event : ${dashboard.recentEvents}">
+                            <div class="timeline-head">
+                                <strong th:text="${event.employee != null ? event.employee.fullName : 'Без працівника'}">Ім'я Прізвище</strong>
+                                <span class="status-badge"
+                                      th:classappend="${event.eventType == 'ПРИЙНЯТТЯ'} ? ' status-active' : (${event.eventType == 'ПЕРЕВЕДЕННЯ'} ? ' status-vacation' : ' status-dismissed')"
+                                      th:text="${event.eventType}">
+                                    ПРИЙНЯТТЯ
+                                </span>
+                            </div>
+                            <div class="timeline-meta">
+                                <span th:text="${event.department != null ? event.department.name : 'Без департаменту'}">ІТ</span>
+                                <span th:text="${event.position != null ? event.position.name : 'Без посади'}">QA Engineer</span>
+                                <span th:text="${event.startDate != null ? event.startDate : '-'}">2026-01-01</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(dashboard.recentEvents)}">
+                        <i class="bi bi-clock-history"></i>
+                        <h3>Журнал ще порожній</h3>
+                        <p>Після додавання працівників тут будуть прийняття, переведення та звільнення.</p>
+                    </div>
+                </article>
+            </aside>
+        </div>
+    </main>
+</div>
+</body>
+</html>

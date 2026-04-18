@@ -11,4 +11,6 @@ public interface JobHistoryRepository extends JpaRepository<JobHistory, Long> {
     List<JobHistory> findByEmployeeIdOrderByStartDateDescIdDesc(Long employeeId);
 
     List<JobHistory> findByEmployeeIdAndEndDateIsNullOrderByStartDateDescIdDesc(Long employeeId);
+
+    List<JobHistory> findTop8ByOrderByStartDateDescIdDesc();
 }
