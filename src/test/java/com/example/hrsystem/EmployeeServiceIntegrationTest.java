@@ -1,11 +1,13 @@
 package com.example.hrsystem;
 
 import com.example.hrsystem.entity.Department;
+import com.example.hrsystem.entity.Document;
 import com.example.hrsystem.entity.Employee;
 import com.example.hrsystem.entity.JobHistory;
 import com.example.hrsystem.entity.Position;
 import com.example.hrsystem.entity.Vacation;
 import com.example.hrsystem.repository.DepartmentRepository;
+import com.example.hrsystem.repository.DocumentRepository;
 import com.example.hrsystem.repository.EmployeeRepository;
 import com.example.hrsystem.repository.JobHistoryRepository;
 import com.example.hrsystem.repository.PositionRepository;
@@ -17,10 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -47,6 +51,9 @@ class EmployeeServiceIntegrationTest {
     private JobHistoryRepository jobHistoryRepository;
 
     @Autowired
+    private DocumentRepository documentRepository;
+
+    @Autowired
     private VacationRepository vacationRepository;
 
     @Autowired
@@ -55,6 +62,7 @@ class EmployeeServiceIntegrationTest {
     @BeforeEach
     void cleanDatabase() {
         jobHistoryRepository.deleteAllInBatch();
+        documentRepository.deleteAllInBatch();
         vacationRepository.deleteAllInBatch();
         timesheetRepository.deleteAllInBatch();
         employeeRepository.deleteAllInBatch();
@@ -68,7 +76,7 @@ class EmployeeServiceIntegrationTest {
         Position qaEngineer = createPosition("QA Engineer", it, "1800.00");
 
         Employee employee = buildEmployee("Ірина", "Мельник", "3000000001", LocalDate.of(2025, 2, 10), Employee.STATUS_ACTIVE);
-        Employee savedEmployee = employeeService.saveEmployee(employee, it.getId(), qaEngineer.getId(), null, null);
+        Employee savedEmployee = employeeService.saveEmployee(employee, it.getId(), qaEngineer.getId(), null, null, null, null);
 
         assertThat(savedEmployee.getId()).isNotNull();
         assertThat(savedEmployee.getDepartment().getId()).isEqualTo(it.getId());
@@ -94,10 +102,12 @@ class EmployeeServiceIntegrationTest {
                 sales.getId(),
                 salesManager.getId(),
                 null,
+                null,
+                null,
                 null
         );
 
-        employeeService.saveEmployee(copyForUpdate(savedEmployee), it.getId(), frontendDeveloper.getId(), null, null);
+        employeeService.saveEmployee(copyForUpdate(savedEmployee), it.getId(), frontendDeveloper.getId(), null, null, null, null);
 
         List<JobHistory> historyEntries = jobHistoryRepository.findByEmployeeIdOrderByStartDateDescIdDesc(savedEmployee.getId());
         assertThat(historyEntries).hasSize(2);
@@ -116,6 +126,8 @@ class EmployeeServiceIntegrationTest {
                 buildEmployee("Оксана", "Романюк", "3000000003", LocalDate.of(2023, 9, 4), Employee.STATUS_ACTIVE),
                 legal.getId(),
                 lawyer.getId(),
+                null,
+                null,
                 null,
                 null
         );
@@ -141,6 +153,8 @@ class EmployeeServiceIntegrationTest {
                 buildEmployee("Олена", "Коваленко", "3000000004", LocalDate.of(2024, 5, 18), Employee.STATUS_ACTIVE),
                 hr.getId(),
                 recruiter.getId(),
+                null,
+                null,
                 null,
                 null
         );
@@ -169,6 +183,8 @@ class EmployeeServiceIntegrationTest {
                 finance.getId(),
                 analyst.getId(),
                 null,
+                null,
+                null,
                 null
         );
 
@@ -177,11 +193,55 @@ class EmployeeServiceIntegrationTest {
                 finance.getId(),
                 analyst.getId(),
                 null,
+                null,
+                null,
                 null
         )).isInstanceOf(DataIntegrityViolationException.class);
 
         assertThat(employeeRepository.count()).isEqualTo(1);
         assertThat(jobHistoryRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    void saveEmployeeStoresAndUpdatesPersonnelDocumentsByCategory() throws IOException {
+        Department hr = createDepartment("HR");
+        Position recruiter = createPosition("Recruiter", hr, "1200.00");
+
+        Employee savedEmployee = employeeService.saveEmployee(
+                buildEmployee("Наталія", "Гнатюк", "3000000006", LocalDate.of(2025, 3, 1), Employee.STATUS_ACTIVE),
+                hr.getId(),
+                recruiter.getId(),
+                null,
+                new MockMultipartFile("hireDocumentFile", "hire.pdf", "application/pdf", "hire-v1".getBytes(StandardCharsets.UTF_8)),
+                null,
+                new MockMultipartFile("transferDocumentFile", "transfer.pdf", "application/pdf", "transfer-v1".getBytes(StandardCharsets.UTF_8))
+        );
+
+        List<Document> documents = documentRepository.findByEmployeeIdOrderByIdDesc(savedEmployee.getId());
+        assertThat(documents).hasSize(2);
+        assertThat(documents).extracting(Document::getDocumentCategory)
+                .containsExactlyInAnyOrder(Document.CATEGORY_HIRING, Document.CATEGORY_TRANSFER);
+
+        employeeService.saveEmployee(
+                copyForUpdate(savedEmployee),
+                hr.getId(),
+                recruiter.getId(),
+                null,
+                new MockMultipartFile("hireDocumentFile", "hire-updated.pdf", "application/pdf", "hire-v2".getBytes(StandardCharsets.UTF_8)),
+                new MockMultipartFile("dismissalDocumentFile", "dismissal.pdf", "application/pdf", "dismissal-v1".getBytes(StandardCharsets.UTF_8)),
+                null
+        );
+
+        documents = documentRepository.findByEmployeeIdOrderByIdDesc(savedEmployee.getId());
+        assertThat(documents).hasSize(3);
+
+        Document hireDocument = documentRepository.findByEmployeeIdAndDocumentCategory(savedEmployee.getId(), Document.CATEGORY_HIRING)
+                .orElseThrow();
+        assertThat(hireDocument.getFileName()).isEqualTo("hire-hire-updated.pdf");
+        assertThat(new String(hireDocument.getData(), StandardCharsets.UTF_8)).isEqualTo("hire-v2");
+
+        assertThat(documentRepository.findByEmployeeIdAndDocumentCategory(savedEmployee.getId(), Document.CATEGORY_DISMISSAL))
+                .isPresent();
     }
 
     private Department createDepartment(String name) {

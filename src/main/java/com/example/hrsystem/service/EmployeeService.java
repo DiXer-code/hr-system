@@ -98,7 +98,9 @@ public class EmployeeService {
                                  Integer departmentId,
                                  Integer positionId,
                                  MultipartFile avatarFile,
-                                 MultipartFile documentFile) throws IOException {
+                                 MultipartFile hireDocumentFile,
+                                 MultipartFile dismissalDocumentFile,
+                                 MultipartFile transferDocumentFile) throws IOException {
         boolean isNew = formEmployee.getId() == null;
         Employee employee = isNew ? new Employee() : findById(formEmployee.getId());
 
@@ -140,9 +142,9 @@ public class EmployeeService {
 
         Employee savedEmployee = employeeRepository.save(employee);
 
-        if (documentFile != null && !documentFile.isEmpty()) {
-            documentRepository.save(createDocument(savedEmployee, documentFile));
-        }
+        upsertPersonnelDocument(savedEmployee, hireDocumentFile, Document.CATEGORY_HIRING);
+        upsertPersonnelDocument(savedEmployee, dismissalDocumentFile, Document.CATEGORY_DISMISSAL);
+        upsertPersonnelDocument(savedEmployee, transferDocumentFile, Document.CATEGORY_TRANSFER);
 
         syncJobHistory(savedEmployee, previousDepartment, previousPosition, previousStatus, isNew);
         return savedEmployee;
@@ -264,17 +266,33 @@ public class EmployeeService {
         }
     }
 
-    private Document createDocument(Employee employee, MultipartFile documentFile) throws IOException {
-        Document document = new Document();
+    private void upsertPersonnelDocument(Employee employee, MultipartFile documentFile, String category) throws IOException {
+        if (documentFile == null || documentFile.isEmpty()) {
+            return;
+        }
+
+        Document document = documentRepository.findByEmployeeIdAndDocumentCategory(employee.getId(), category)
+                .orElseGet(Document::new);
         document.setEmployee(employee);
+        document.setDocumentCategory(category);
         document.setFileName(
-                StringUtils.hasText(documentFile.getOriginalFilename()) ? documentFile.getOriginalFilename() : "document"
+                buildStoredFileName(category, documentFile.getOriginalFilename())
         );
         document.setFileType(
                 StringUtils.hasText(documentFile.getContentType()) ? documentFile.getContentType() : "application/octet-stream"
         );
         document.setData(documentFile.getBytes());
-        return document;
+        documentRepository.save(document);
+    }
+
+    private String buildStoredFileName(String category, String originalFileName) {
+        String safeName = StringUtils.hasText(originalFileName) ? originalFileName : "document";
+        return switch (category) {
+            case Document.CATEGORY_HIRING -> "hire-" + safeName;
+            case Document.CATEGORY_DISMISSAL -> "dismissal-" + safeName;
+            case Document.CATEGORY_TRANSFER -> "transfer-" + safeName;
+            default -> safeName;
+        };
     }
 
     private BigDecimal resolveSalary(Position position) {

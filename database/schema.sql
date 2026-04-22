@@ -45,6 +45,7 @@ CREATE TABLE Document (
     employee_id BIGINT NOT NULL,
     file_name VARCHAR(255),
     file_type VARCHAR(255),
+    document_category VARCHAR(64),
     data LONGBLOB,
     CONSTRAINT fk_document_employee
         FOREIGN KEY (employee_id) REFERENCES Employee(id)

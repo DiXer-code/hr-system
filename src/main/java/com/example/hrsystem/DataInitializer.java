@@ -251,7 +251,7 @@ public class DataInitializer implements CommandLineRunner {
         employee.setMaritalStatus("Не одружений/а");
         employee.setAddressRegistration("м. Київ");
         employee.setAddressActual("м. Київ");
-        return employeeService.saveEmployee(employee, department.getId(), position.getId(), null, null);
+        return employeeService.saveEmployee(employee, department.getId(), position.getId(), null, null, null, null);
     }
 
     private void transferEmployee(Employee employee, Department targetDepartment, Position targetPosition) throws IOException {
@@ -271,7 +271,7 @@ public class DataInitializer implements CommandLineRunner {
         draft.setMaritalStatus(employee.getMaritalStatus());
         draft.setAddressRegistration(employee.getAddressRegistration());
         draft.setAddressActual(employee.getAddressActual());
-        employeeService.saveEmployee(draft, targetDepartment.getId(), targetPosition.getId(), null, null);
+        employeeService.saveEmployee(draft, targetDepartment.getId(), targetPosition.getId(), null, null, null, null);
     }
 
     private Position findPosition(String positionName) {

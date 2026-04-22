@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -131,6 +132,31 @@ public class Employee {
                 : "";
         String initials = firstInitial + lastInitial;
         return initials.isBlank() ? "HR" : initials;
+    }
+
+    public Document getHiringDocument() {
+        return getDocumentByCategory(Document.CATEGORY_HIRING);
+    }
+
+    public Document getDismissalDocument() {
+        return getDocumentByCategory(Document.CATEGORY_DISMISSAL);
+    }
+
+    public Document getTransferDocument() {
+        return getDocumentByCategory(Document.CATEGORY_TRANSFER);
+    }
+
+    public List<Document> getOtherDocuments() {
+        return documents.stream()
+                .filter(document -> !Document.PERSONNEL_CATEGORIES.contains(document.getDocumentCategory()))
+                .collect(Collectors.toList());
+    }
+
+    private Document getDocumentByCategory(String category) {
+        return documents.stream()
+                .filter(document -> category.equals(document.getDocumentCategory()))
+                .findFirst()
+                .orElse(null);
     }
 
     private void appendPart(StringBuilder builder, String value) {

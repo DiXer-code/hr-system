@@ -66,7 +66,9 @@ public class EmployeeController {
                                @RequestParam(value = "departmentId", required = false) Integer departmentId,
                                @RequestParam(value = "positionId", required = false) Integer positionId,
                                @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
-                               @RequestParam(value = "documentFile", required = false) MultipartFile documentFile,
+                               @RequestParam(value = "hireDocumentFile", required = false) MultipartFile hireDocumentFile,
+                               @RequestParam(value = "dismissalDocumentFile", required = false) MultipartFile dismissalDocumentFile,
+                               @RequestParam(value = "transferDocumentFile", required = false) MultipartFile transferDocumentFile,
                                Model model,
                                RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
@@ -76,7 +78,15 @@ public class EmployeeController {
         }
 
         try {
-            Employee savedEmployee = employeeService.saveEmployee(employee, departmentId, positionId, avatarFile, documentFile);
+            Employee savedEmployee = employeeService.saveEmployee(
+                    employee,
+                    departmentId,
+                    positionId,
+                    avatarFile,
+                    hireDocumentFile,
+                    dismissalDocumentFile,
+                    transferDocumentFile
+            );
             redirectAttributes.addFlashAttribute("successMessage", "Дані працівника успішно збережено.");
             return "redirect:/employees/edit/" + savedEmployee.getId();
         } catch (IllegalArgumentException | IllegalStateException ex) {

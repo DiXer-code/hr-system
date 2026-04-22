@@ -392,7 +392,52 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', filterPositions);
+    function enhancePersonnelDocuments() {
+        const legacyInput = document.getElementById('documentFile');
+        if (!legacyInput) {
+            return;
+        }
+
+        const uploadBox = legacyInput.closest('.upload-box');
+        const legacyField = legacyInput.closest('.field-block');
+        if (!uploadBox || !legacyField) {
+            return;
+        }
+
+        legacyField.style.display = 'none';
+
+        if (uploadBox.querySelector('[data-personnel-documents="true"]')) {
+            return;
+        }
+
+        const documentsGrid = document.createElement('div');
+        documentsGrid.className = 'grid-3';
+        documentsGrid.dataset.personnelDocuments = 'true';
+        documentsGrid.innerHTML = `
+            <div class="field-block">
+                <label class="field-label" for="hireDocumentFile">Наказ про прийняття</label>
+                <input id="hireDocumentFile" class="form-control-modern" type="file" name="hireDocumentFile" accept="application/pdf,image/*">
+                <span class="helper-text">Окремий документ для оформлення прийняття на роботу.</span>
+            </div>
+            <div class="field-block">
+                <label class="field-label" for="transferDocumentFile">Наказ про переведення</label>
+                <input id="transferDocumentFile" class="form-control-modern" type="file" name="transferDocumentFile" accept="application/pdf,image/*">
+                <span class="helper-text">Додавайте файл при переведенні в інший відділ або на іншу посаду.</span>
+            </div>
+            <div class="field-block">
+                <label class="field-label" for="dismissalDocumentFile">Наказ про звільнення</label>
+                <input id="dismissalDocumentFile" class="form-control-modern" type="file" name="dismissalDocumentFile" accept="application/pdf,image/*">
+                <span class="helper-text">Завантажуйте окремий документ для звільнення працівника.</span>
+            </div>
+        `;
+
+        uploadBox.insertBefore(documentsGrid, uploadBox.firstChild);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        filterPositions();
+        enhancePersonnelDocuments();
+    });
 </script>
 </body>
 </html>
