@@ -1,0 +1,37 @@
+flowchart TD
+    subgraph Q["Queue Pattern"]
+        Q1["HR UI<br/>створення або редагування працівника"]
+        Q2["EmployeeService<br/>основна транзакція"]
+        Q3["QueueMessage<br/>event_type, aggregate_id, payload_json, status"]
+        Q4["Queue Worker<br/>фоновий обробник"]
+        Q5["Background Task<br/>повідомлення, звіт, архівація"]
+        Q1 --> Q2 --> Q3 --> Q4 --> Q5
+    end
+
+    subgraph C["Caching Pattern"]
+        C1["HR UI<br/>запит довідника або звіту"]
+        C2["DirectoryService / ReportService"]
+        C3["Cache<br/>departments, positions, reports"]
+        C4["MySQL"]
+        C1 --> C2 --> C3
+        C3 -->|cache miss| C4
+        C4 --> C3
+        C3 -->|cache hit| C2
+    end
+
+    subgraph A["Audit Log Pattern"]
+        A1["HR UI<br/>користувач виконує дію"]
+        A2["Business Service<br/>save / update / delete"]
+        A3["Audit Service<br/>формування аудиторського запису"]
+        A4["AuditLog<br/>actor, action, entity, old/new value, timestamp"]
+        A1 --> A2 --> A3 --> A4
+    end
+
+    subgraph V["Versioning Pattern"]
+        V1["HR UI<br/>редагування картки працівника"]
+        V2["EmployeeService"]
+        V3["EmployeeVersion<br/>version_no, snapshot_json, changed_by"]
+        V4["Employee<br/>поточний стан"]
+        V5["JobHistory<br/>кадрові події"]
+        V1 --> V2 --> V3 --> V4 --> V5
+    end

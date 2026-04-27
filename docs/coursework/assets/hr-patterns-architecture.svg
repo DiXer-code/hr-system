@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2500" height="1860" viewBox="0 0 2500 1860" role="img" aria-labelledby="title desc">
+  <title id="title">Архітектурні патерни для HR System</title>
+  <desc id="desc">Окрема велика схема патернів Queue, Caching, Audit Log і Versioning для HR System із потоками даних і призначенням кожного патерна.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2.4; }
+      .lane-q { fill: #eff6ff; stroke: #60a5fa; stroke-width: 2.4; }
+      .lane-c { fill: #ecfdf5; stroke: #34d399; stroke-width: 2.4; }
+      .lane-a { fill: #fff7ed; stroke: #fb923c; stroke-width: 2.4; }
+      .lane-v { fill: #f5f3ff; stroke: #a78bfa; stroke-width: 2.4; }
+      .box { fill: #ffffff; stroke: #334155; stroke-width: 2.2; }
+      .title { font: 700 22px Arial, sans-serif; fill: #0f172a; }
+      .text { font: 17px Arial, sans-serif; fill: #334155; }
+      .caption { font: 700 40px Arial, sans-serif; fill: #0f172a; }
+      .subcaption { font: 19px Arial, sans-serif; fill: #475569; }
+      .panel-title { font: 700 28px Arial, sans-serif; fill: #0f172a; }
+      .note-title { font: 700 20px Arial, sans-serif; fill: #0f172a; }
+      .note-text { font: 17px Arial, sans-serif; fill: #334155; }
+      .line { stroke: #475569; stroke-width: 3; fill: none; }
+      .arrow { marker-end: url(#arrow); }
+      .legend { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .legend-title { font: 700 22px Arial, sans-serif; fill: #0f172a; }
+      .legend-text { font: 17px Arial, sans-serif; fill: #334155; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="2500" height="1860"/>
+
+  <text class="caption" x="70" y="70">HR System: архітектурні патерни проєктування</text>
+  <text class="subcaption" x="70" y="108">Схема показує, як у кадровій системі можуть бути організовані Queue, Caching, Audit Log і Versioning без змішування їх в одну перевантажену картинку.</text>
+
+  <rect class="panel" x="50" y="150" width="2400" height="1540" rx="28" ry="28"/>
+
+  <!-- Queue lane -->
+  <rect class="lane-q" x="90" y="210" width="2320" height="300" rx="24" ry="24"/>
+  <text class="panel-title" x="130" y="256">1. Шаблон проєктування черги (Queue Pattern)</text>
+
+  <rect class="box" x="150" y="310" width="250" height="120" rx="18" ry="18"/>
+  <text class="title" x="220" y="355">HR UI</text>
+  <text class="text" x="185" y="392">Створення або зміна працівника</text>
+
+  <rect class="box" x="500" y="310" width="300" height="120" rx="18" ry="18"/>
+  <text class="title" x="565" y="355">EmployeeService</text>
+  <text class="text" x="555" y="392">Основна транзакція збереження</text>
+
+  <rect class="box" x="900" y="290" width="320" height="160" rx="18" ry="18"/>
+  <text class="title" x="988" y="335">QueueMessage</text>
+  <text class="text" x="950" y="372">event_type, aggregate_id</text>
+  <text class="text" x="950" y="406">payload_json, status</text>
+
+  <rect class="box" x="1330" y="310" width="290" height="120" rx="18" ry="18"/>
+  <text class="title" x="1406" y="355">Queue Worker</text>
+  <text class="text" x="1368" y="392">Фонова обробка подій</text>
+
+  <rect class="box" x="1730" y="310" width="280" height="120" rx="18" ry="18"/>
+  <text class="title" x="1794" y="355">Background Task</text>
+  <text class="text" x="1765" y="392">Звіт, повідомлення, архівація</text>
+
+  <path class="line arrow" d="M 400 370 L 500 370"/>
+  <path class="line arrow" d="M 800 370 L 900 370"/>
+  <path class="line arrow" d="M 1220 370 L 1330 370"/>
+  <path class="line arrow" d="M 1620 370 L 1730 370"/>
+
+  <text class="note-title" x="150" y="476">Навіщо:</text>
+  <text class="note-text" x="235" y="476">важкі задачі не блокують веб-запит користувача, а виконуються після основної транзакції.</text>
+
+  <!-- Cache lane -->
+  <rect class="lane-c" x="90" y="550" width="2320" height="300" rx="24" ry="24"/>
+  <text class="panel-title" x="130" y="596">2. Шаблон проєктування кешування (Caching Pattern)</text>
+
+  <rect class="box" x="150" y="650" width="250" height="120" rx="18" ry="18"/>
+  <text class="title" x="220" y="695">HR UI</text>
+  <text class="text" x="172" y="732">Запит списку департаментів або звіту</text>
+
+  <rect class="box" x="500" y="650" width="300" height="120" rx="18" ry="18"/>
+  <text class="title" x="572" y="695">DirectoryService</text>
+  <text class="text" x="558" y="732">Читання довідників і звітів</text>
+
+  <rect class="box" x="900" y="630" width="280" height="160" rx="18" ry="18"/>
+  <text class="title" x="1000" y="675">Cache</text>
+  <text class="text" x="942" y="712">departments, positions, reports</text>
+  <text class="text" x="972" y="746">hit / miss / evict</text>
+
+  <rect class="box" x="1280" y="650" width="260" height="120" rx="18" ry="18"/>
+  <text class="title" x="1374" y="695">MySQL</text>
+  <text class="text" x="1346" y="732">Початкове джерело даних</text>
+
+  <path class="line arrow" d="M 400 710 L 500 710"/>
+  <path class="line arrow" d="M 800 710 L 900 710"/>
+  <path class="line arrow" d="M 1180 690 L 1280 690"/>
+  <path class="line arrow" d="M 1280 740 L 1180 740"/>
+  <text class="note-text" x="1600" y="690">Cache hit: дані повертаються без повторного SQL-запиту.</text>
+  <text class="note-text" x="1600" y="730">Cache miss: дані зчитуються з БД і зберігаються в кеші.</text>
+  <text class="note-text" x="1600" y="770">Після зміни довідника кеш інвалідовується.</text>
+
+  <!-- Audit lane -->
+  <rect class="lane-a" x="90" y="890" width="2320" height="300" rx="24" ry="24"/>
+  <text class="panel-title" x="130" y="936">3. Шаблон журналу аудиту (Audit Log Pattern)</text>
+
+  <rect class="box" x="150" y="990" width="250" height="120" rx="18" ry="18"/>
+  <text class="title" x="220" y="1035">HR UI</text>
+  <text class="text" x="180" y="1072">Користувач виконує CRUD-операцію</text>
+
+  <rect class="box" x="500" y="990" width="290" height="120" rx="18" ry="18"/>
+  <text class="title" x="580" y="1035">Business Service</text>
+  <text class="text" x="560" y="1072">Save / Update / Delete / Dismiss</text>
+
+  <rect class="box" x="900" y="970" width="320" height="160" rx="18" ry="18"/>
+  <text class="title" x="990" y="1015">Audit Service</text>
+  <text class="text" x="945" y="1052">Хто, що, коли і над якою сутністю</text>
+  <text class="text" x="955" y="1086">old_value_json / new_value_json</text>
+
+  <rect class="box" x="1330" y="970" width="330" height="160" rx="18" ry="18"/>
+  <text class="title" x="1420" y="1015">AuditLog</text>
+  <text class="text" x="1365" y="1052">actor_username, action_type</text>
+  <text class="text" x="1365" y="1086">entity_name, entity_id, created_at</text>
+
+  <path class="line arrow" d="M 400 1050 L 500 1050"/>
+  <path class="line arrow" d="M 790 1050 L 900 1050"/>
+  <path class="line arrow" d="M 1220 1050 L 1330 1050"/>
+
+  <text class="note-title" x="1770" y="1025">Навіщо:</text>
+  <text class="note-text" x="1855" y="1025">дозволяє відстежити автора зміни, час, старий і новий стан об'єкта.</text>
+  <text class="note-text" x="1770" y="1070">Особливо важливо для прийняття, переведення, звільнення та видалення.</text>
+
+  <!-- Versioning lane -->
+  <rect class="lane-v" x="90" y="1230" width="2320" height="300" rx="24" ry="24"/>
+  <text class="panel-title" x="130" y="1276">4. Шаблон версіонування (Versioning Pattern)</text>
+
+  <rect class="box" x="150" y="1330" width="250" height="120" rx="18" ry="18"/>
+  <text class="title" x="220" y="1375">HR UI</text>
+  <text class="text" x="186" y="1412">Редагування картки працівника</text>
+
+  <rect class="box" x="500" y="1330" width="290" height="120" rx="18" ry="18"/>
+  <text class="title" x="582" y="1375">EmployeeService</text>
+  <text class="text" x="560" y="1412">Оновлення основної сутності</text>
+
+  <rect class="box" x="900" y="1310" width="300" height="160" rx="18" ry="18"/>
+  <text class="title" x="985" y="1355">EmployeeVersion</text>
+  <text class="text" x="945" y="1392">version_no, snapshot_json</text>
+  <text class="text" x="945" y="1426">changed_at, changed_by</text>
+
+  <rect class="box" x="1300" y="1330" width="260" height="120" rx="18" ry="18"/>
+  <text class="title" x="1392" y="1375">Employee</text>
+  <text class="text" x="1368" y="1412">Поточний стан працівника</text>
+
+  <rect class="box" x="1660" y="1330" width="320" height="120" rx="18" ry="18"/>
+  <text class="title" x="1762" y="1375">JobHistory</text>
+  <text class="text" x="1700" y="1412">Часткова історія кадрових подій</text>
+
+  <path class="line arrow" d="M 400 1390 L 500 1390"/>
+  <path class="line arrow" d="M 790 1390 L 900 1390"/>
+  <path class="line arrow" d="M 1200 1390 L 1300 1390"/>
+  <path class="line arrow" d="M 1560 1390 L 1660 1390"/>
+
+  <text class="note-title" x="2040" y="1365">Навіщо:</text>
+  <text class="note-text" x="2125" y="1365">повна історія змін усієї картки працівника.</text>
+  <text class="note-text" x="2040" y="1410">JobHistory фіксує кадрові події, але не весь snapshot сутності.</text>
+
+  <!-- Summary -->
+  <rect class="legend" x="90" y="1580" width="2320" height="80" rx="20" ry="20"/>
+  <text class="legend-title" x="125" y="1627">Підсумок:</text>
+  <text class="legend-text" x="250" y="1627">Queue підвищує асинхронність, Cache прискорює читання, Audit Log контролює дії користувачів, Versioning зберігає історію станів сутності.</text>
+</svg>

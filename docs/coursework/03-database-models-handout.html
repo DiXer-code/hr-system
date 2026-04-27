@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR System - моделі БД і патерни проєктування</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --muted: #475569;
+            --accent: #2563eb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+        }
+
+        .page {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 28px 20px 48px;
+        }
+
+        .hero,
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 22px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 12px;
+            letter-spacing: 0;
+        }
+
+        h1 {
+            font-size: 34px;
+        }
+
+        h2 {
+            font-size: 24px;
+        }
+
+        h3 {
+            font-size: 19px;
+        }
+
+        p,
+        ul,
+        ol {
+            margin: 0 0 12px;
+        }
+
+        .lead {
+            color: var(--muted);
+            max-width: 1120px;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .chip {
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 999px;
+            padding: 7px 13px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .diagram {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px;
+        }
+
+        .diagram img {
+            display: block;
+            height: auto;
+            max-width: none;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            vertical-align: top;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        code,
+        .mono {
+            font-family: Consolas, monospace;
+        }
+
+        a {
+            color: var(--accent);
+        }
+
+        .callout {
+            border-left: 4px solid var(--accent);
+            background: #f8fbff;
+            padding: 14px 16px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 980px) {
+            .grid,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <section class="hero">
+        <h1>HR System: концептуальна, логічна модель БД і патерни проєктування</h1>
+        <p class="lead">
+            Це зведений матеріал для курсової роботи: окрема концептуальна ER-модель, окрема логічна модель бази даних,
+            окрема архітектурна схема патернів і посилання на розширені текстові документи. Матеріал побудований так,
+            щоб викладач міг читати його поступово, без перевантаження і без накладання блоків один на один.
+        </p>
+        <div class="chips">
+            <span class="chip">Предметна область: HR</span>
+            <span class="chip">СУБД: MySQL</span>
+            <span class="chip">Нормалізація: 3NF</span>
+            <span class="chip">Spring Boot + JPA</span>
+            <span class="chip">Окремі діаграми</span>
+            <span class="chip">Mermaid для draw.io</span>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>1. Як цим користуватися</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Що показувати викладачу</h3>
+                <ol>
+                    <li>Концептуальну схему предметної області.</li>
+                    <li>Логічну модель таблиць із PK/FK.</li>
+                    <li>Архітектурну схему патернів.</li>
+                    <li>Текстові пояснення з прикладами.</li>
+                </ol>
+            </article>
+            <article class="card">
+                <h3>Де лежать файли</h3>
+                <ul>
+                    <li><a href="./03-database-models.md">03-database-models.md</a></li>
+                    <li><a href="./06-design-patterns.md">06-design-patterns.md</a></li>
+                    <li><a href="./assets/hr-conceptual-model.svg">hr-conceptual-model.svg</a></li>
+                    <li><a href="./assets/hr-logical-model.svg">hr-logical-model.svg</a></li>
+                    <li><a href="./assets/hr-patterns-architecture.svg">hr-patterns-architecture.svg</a></li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>2. Концептуальна модель</h2>
+        <p class="muted">
+            Тут показані сутності предметної області, їх кратності та ключові бізнес-правила на верхньому рівні.
+        </p>
+        <div class="diagram">
+            <img src="./assets/hr-conceptual-model.svg" alt="Концептуальна модель HR System" style="width:2200px;">
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>3. Логічна модель БД</h2>
+        <p class="muted">
+            Тут показані логічні таблиці, атрибути, первинні ключі, зовнішні ключі та розшифровка зв'язків L1-L11.
+        </p>
+        <div class="diagram">
+            <img src="./assets/hr-logical-model.svg" alt="Логічна модель БД HR System" style="width:2600px;">
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>4. Патерни проєктування</h2>
+        <p class="muted">
+            Патерни винесені в окрему схему, щоб не змішувати бізнес-сутності БД і технічну архітектуру застосунку.
+        </p>
+        <div class="diagram">
+            <img src="./assets/hr-patterns-architecture.svg" alt="Архітектурні патерни HR System" style="width:2500px;">
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>5. Короткий зміст для пояснення</h2>
+        <div class="grid-3">
+            <article class="card">
+                <h3>Концептуальна модель</h3>
+                <ul>
+                    <li><strong>Employee</strong> — центральна сутність.</li>
+                    <li><strong>Department</strong> і <strong>Position</strong> задають організаційну структуру.</li>
+                    <li><strong>JobHistory</strong> фіксує кадрові події у часі.</li>
+                    <li>Документи, відпустки, табелі й освіта винесені в окремі підлеглі сутності.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Логічна модель</h3>
+                <ul>
+                    <li>Усі таблиці мають чіткі PK і FK.</li>
+                    <li><strong>Employee.inn</strong> є унікальним.</li>
+                    <li>Поточний стан зберігається окремо від історії.</li>
+                    <li>Модель відповідає вимогам 3NF.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Патерни</h3>
+                <ul>
+                    <li><strong>Queue</strong> — для фонових задач.</li>
+                    <li><strong>Caching</strong> — для довідників і звітів.</li>
+                    <li><strong>Audit Log</strong> — для журналу дій.</li>
+                    <li><strong>Versioning</strong> — для історії станів сутності.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>6. Матриця патернів</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Патерн</th>
+                    <th>Проблема</th>
+                    <th>Де використовується</th>
+                    <th>Який артефакт підтримує</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Queue</td>
+                    <td>Не блокувати користувача важкою післяобробкою</td>
+                    <td>Події після створення або зміни працівника</td>
+                    <td><span class="mono">QueueMessage</span>, worker</td>
+                </tr>
+                <tr>
+                    <td>Caching</td>
+                    <td>Зменшити повторні запити до БД</td>
+                    <td>Довідники департаментів, посад, аналітичні звіти</td>
+                    <td>Spring Cache / in-memory cache / Redis</td>
+                </tr>
+                <tr>
+                    <td>Audit Log</td>
+                    <td>Контроль і трасування дій користувачів</td>
+                    <td>CRUD, login, переведення, звільнення</td>
+                    <td><span class="mono">AuditLog</span></td>
+                </tr>
+                <tr>
+                    <td>Versioning</td>
+                    <td>Зберігати попередні стани сутності</td>
+                    <td>Повна історія редагування картки працівника</td>
+                    <td><span class="mono">EmployeeVersion</span>, частково <span class="mono">JobHistory</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>7. Документи з повним поясненням</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Логічна модель БД</h3>
+                <p>
+                    Повний документ з концептуальною, логічною і фізичною моделлю:
+                </p>
+                <p><a href="./03-database-models.md">03-database-models.md</a></p>
+            </article>
+            <article class="card">
+                <h3>Патерни проєктування</h3>
+                <p>
+                    Повний документ з Queue, Caching, Audit Log, Versioning і прикладами:
+                </p>
+                <p><a href="./06-design-patterns.md">06-design-patterns.md</a></p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>8. Mermaid-код для draw.io</h2>
+        <p class="muted">
+            У папці <span class="mono">drawio</span> лежать готові Mermaid-файли. Вони вставляються в draw.io через
+            <span class="mono">Insert -> Advanced -> Mermaid</span>.
+        </p>
+        <div class="grid">
+            <article class="card">
+                <h3>Інструкція</h3>
+                <p><a href="./drawio/README.md">drawio/README.md</a></p>
+            </article>
+            <article class="card">
+                <h3>Коди</h3>
+                <ul>
+                    <li><a href="./drawio/01-conceptual-model.mmd">01-conceptual-model.mmd</a></li>
+                    <li><a href="./drawio/02-logical-model.mmd">02-logical-model.mmd</a></li>
+                    <li><a href="./drawio/03-design-patterns.mmd">03-design-patterns.mmd</a></li>
+                </ul>
+            </article>
+        </div>
+        <div class="callout">
+            Якщо сторінка вже була відкрита раніше, натисни <span class="mono">Ctrl+F5</span>, щоб браузер скинув кеш і показав нові великі схеми.
+        </div>
+    </section>
+</main>
+</body>
+</html>

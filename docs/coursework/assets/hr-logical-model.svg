@@ -1,0 +1,250 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1980" viewBox="0 0 2600 1980" role="img" aria-labelledby="title desc">
+  <title id="title">Логічна модель БД HR System</title>
+  <desc id="desc">Велика логічна модель бази даних HR System з таблицями, первинними та зовнішніми ключами і розшифровкою зв'язків.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2.4; }
+      .box { fill: #ffffff; stroke: #334155; stroke-width: 2.2; }
+      .box-core { fill: #eff6ff; stroke: #2563eb; stroke-width: 3.5; }
+      .head { fill: #e2e8f0; }
+      .head-core { fill: #dbeafe; }
+      .title { font: 700 22px Arial, sans-serif; fill: #0f172a; }
+      .text { font: 17px Arial, sans-serif; fill: #334155; }
+      .small { font: 16px Arial, sans-serif; fill: #475569; }
+      .caption { font: 700 40px Arial, sans-serif; fill: #0f172a; }
+      .subcaption { font: 19px Arial, sans-serif; fill: #475569; }
+      .panel-title { font: 700 28px Arial, sans-serif; fill: #0f172a; }
+      .line { stroke: #475569; stroke-width: 3; fill: none; }
+      .chip { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.8; }
+      .chip-accent { fill: #dbeafe; stroke: #60a5fa; stroke-width: 1.8; }
+      .chip-text { font: 700 17px Arial, sans-serif; fill: #0f172a; }
+      .chip-accent-text { font: 700 17px Arial, sans-serif; fill: #1d4ed8; }
+      .legend-card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .legend-title { font: 700 22px Arial, sans-serif; fill: #0f172a; }
+      .legend-text { font: 17px Arial, sans-serif; fill: #334155; }
+      .sep { stroke: #cbd5e1; stroke-width: 1.4; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="2600" height="1980"/>
+
+  <text class="caption" x="70" y="70">HR System: логічна модель бази даних</text>
+  <text class="subcaption" x="70" y="108">На схемі показані логічні таблиці, основні атрибути, ключі PK/FK/AK і зв'язки між ними без перевантаження перетинами.</text>
+
+  <rect class="panel" x="50" y="150" width="540" height="980" rx="26" ry="26"/>
+  <text class="panel-title" x="88" y="198">1. Довідники</text>
+
+  <rect class="panel" x="620" y="150" width="950" height="980" rx="26" ry="26"/>
+  <text class="panel-title" x="658" y="198">2. Центральна таблиця працівника</text>
+
+  <rect class="panel" x="1600" y="150" width="940" height="980" rx="26" ry="26"/>
+  <text class="panel-title" x="1638" y="198">3. Підлеглі й адміністративні таблиці</text>
+
+  <rect class="panel" x="50" y="1160" width="2490" height="760" rx="26" ry="26"/>
+  <text class="panel-title" x="88" y="1208">4. Розшифровка зовнішніх ключів та пояснення моделі</text>
+
+  <!-- Department -->
+  <rect class="box" x="110" y="270" width="420" height="270" rx="18" ry="18"/>
+  <rect class="head" x="110" y="270" width="420" height="56" rx="18" ry="18"/>
+  <text class="title" x="148" y="306">Department</text>
+  <line class="sep" x1="110" y1="326" x2="530" y2="326"/>
+  <text class="text" x="145" y="370">PK  id</text>
+  <text class="text" x="145" y="410">name</text>
+  <text class="text" x="145" y="450">description</text>
+  <text class="small" x="145" y="500">Призначення: структурний підрозділ компанії</text>
+
+  <!-- Position -->
+  <rect class="box" x="110" y="620" width="420" height="360" rx="18" ry="18"/>
+  <rect class="head" x="110" y="620" width="420" height="56" rx="18" ry="18"/>
+  <text class="title" x="148" y="656">Position</text>
+  <line class="sep" x1="110" y1="676" x2="530" y2="676"/>
+  <text class="text" x="145" y="720">PK  id</text>
+  <text class="text" x="145" y="760">name</text>
+  <text class="text" x="145" y="800">salary</text>
+  <text class="text" x="145" y="840">FK  department_id -&gt; Department.id</text>
+  <text class="small" x="145" y="900">Призначення: довідник посад у межах департаменту</text>
+
+  <!-- Employee -->
+  <rect class="box box-core" x="690" y="270" width="810" height="770" rx="22" ry="22"/>
+  <rect class="head-core" x="690" y="270" width="810" height="62" rx="22" ry="22"/>
+  <text class="title" x="730" y="308">Employee</text>
+  <line class="sep" x1="690" y1="332" x2="1500" y2="332"/>
+  <text class="text" x="730" y="378">PK  id</text>
+  <text class="text" x="730" y="416">first_name</text>
+  <text class="text" x="730" y="454">last_name</text>
+  <text class="text" x="730" y="492">middle_name</text>
+  <text class="text" x="730" y="530">gender</text>
+  <text class="text" x="730" y="568">marital_status</text>
+  <text class="text" x="730" y="606">AK  inn (UNIQUE)</text>
+  <text class="text" x="730" y="644">address_registration</text>
+  <text class="text" x="730" y="682">address_actual</text>
+  <text class="text" x="730" y="720">email</text>
+  <text class="text" x="730" y="758">phone_main</text>
+  <text class="text" x="730" y="796">phone_work</text>
+  <text class="text" x="1110" y="378">birth_date</text>
+  <text class="text" x="1110" y="416">hire_date</text>
+  <text class="text" x="1110" y="454">dismissal_date</text>
+  <text class="text" x="1110" y="492">avatar</text>
+  <text class="text" x="1110" y="530">avatar_content_type</text>
+  <text class="text" x="1110" y="568">status</text>
+  <text class="text" x="1110" y="606">FK  current_department_id -&gt; Department.id</text>
+  <text class="text" x="1110" y="644">FK  current_position_id -&gt; Position.id</text>
+  <text class="small" x="730" y="956">Призначення: основна картка працівника та його поточний стан</text>
+
+  <!-- Document -->
+  <rect class="box" x="1660" y="260" width="390" height="290" rx="18" ry="18"/>
+  <rect class="head" x="1660" y="260" width="390" height="56" rx="18" ry="18"/>
+  <text class="title" x="1698" y="296">Document</text>
+  <line class="sep" x1="1660" y1="316" x2="2050" y2="316"/>
+  <text class="text" x="1695" y="360">PK  id</text>
+  <text class="text" x="1695" y="398">FK  employee_id -&gt; Employee.id</text>
+  <text class="text" x="1695" y="436">file_name</text>
+  <text class="text" x="1695" y="474">file_type</text>
+  <text class="text" x="1695" y="512">document_category</text>
+  <text class="text" x="1695" y="550">data</text>
+
+  <!-- JobHistory -->
+  <rect class="box" x="2110" y="260" width="370" height="400" rx="18" ry="18"/>
+  <rect class="head" x="2110" y="260" width="370" height="56" rx="18" ry="18"/>
+  <text class="title" x="2148" y="296">JobHistory</text>
+  <line class="sep" x1="2110" y1="316" x2="2480" y2="316"/>
+  <text class="text" x="2145" y="360">PK  id</text>
+  <text class="text" x="2145" y="398">FK  employee_id -&gt; Employee.id</text>
+  <text class="text" x="2145" y="436">FK  department_id -&gt; Department.id</text>
+  <text class="text" x="2145" y="474">FK  position_id -&gt; Position.id</text>
+  <text class="text" x="2145" y="512">start_date</text>
+  <text class="text" x="2145" y="550">end_date</text>
+  <text class="text" x="2145" y="588">personal_salary</text>
+  <text class="text" x="2145" y="626">event_type</text>
+
+  <!-- Education -->
+  <rect class="box" x="1660" y="700" width="260" height="290" rx="18" ry="18"/>
+  <rect class="head" x="1660" y="700" width="260" height="56" rx="18" ry="18"/>
+  <text class="title" x="1715" y="736">Education</text>
+  <line class="sep" x1="1660" y1="756" x2="1920" y2="756"/>
+  <text class="text" x="1690" y="800">PK  id</text>
+  <text class="text" x="1690" y="838">FK  employee_id</text>
+  <text class="text" x="1690" y="876">institution</text>
+  <text class="text" x="1690" y="914">faculty</text>
+  <text class="text" x="1690" y="952">degree</text>
+
+  <!-- Vacation -->
+  <rect class="box" x="1950" y="700" width="260" height="290" rx="18" ry="18"/>
+  <rect class="head" x="1950" y="700" width="260" height="56" rx="18" ry="18"/>
+  <text class="title" x="2012" y="736">Vacation</text>
+  <line class="sep" x1="1950" y1="756" x2="2210" y2="756"/>
+  <text class="text" x="1980" y="800">PK  id</text>
+  <text class="text" x="1980" y="838">FK  employee_id</text>
+  <text class="text" x="1980" y="876">start_date</text>
+  <text class="text" x="1980" y="914">end_date</text>
+  <text class="text" x="1980" y="952">type</text>
+
+  <!-- Timesheet -->
+  <rect class="box" x="2240" y="700" width="260" height="290" rx="18" ry="18"/>
+  <rect class="head" x="2240" y="700" width="260" height="56" rx="18" ry="18"/>
+  <text class="title" x="2295" y="736">Timesheet</text>
+  <line class="sep" x1="2240" y1="756" x2="2500" y2="756"/>
+  <text class="text" x="2270" y="800">PK  id</text>
+  <text class="text" x="2270" y="838">FK  employee_id</text>
+  <text class="text" x="2270" y="876">work_date</text>
+  <text class="text" x="2270" y="914">worked_hours</text>
+
+  <!-- Role -->
+  <rect class="box" x="1720" y="1020" width="300" height="170" rx="18" ry="18"/>
+  <rect class="head" x="1720" y="1020" width="300" height="56" rx="18" ry="18"/>
+  <text class="title" x="1830" y="1056">Role</text>
+  <line class="sep" x1="1720" y1="1076" x2="2020" y2="1076"/>
+  <text class="text" x="1750" y="1120">PK  id</text>
+  <text class="text" x="1750" y="1158">name, description</text>
+
+  <!-- User -->
+  <rect class="box" x="2100" y="1020" width="340" height="210" rx="18" ry="18"/>
+  <rect class="head" x="2100" y="1020" width="340" height="56" rx="18" ry="18"/>
+  <text class="title" x="2230" y="1056">User</text>
+  <line class="sep" x1="2100" y1="1076" x2="2440" y2="1076"/>
+  <text class="text" x="2135" y="1120">PK  id</text>
+  <text class="text" x="2135" y="1158">username</text>
+  <text class="text" x="2135" y="1196">password, email</text>
+  <text class="text" x="2135" y="1234">FK  role_id -&gt; Role.id</text>
+
+  <!-- Connectors -->
+  <path class="line" d="M 320 540 L 320 620"/>
+  <rect class="chip-accent" x="340" y="560" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="356" y="583">L1</text>
+
+  <path class="line" d="M 530 405 L 690 405"/>
+  <rect class="chip-accent" x="580" y="360" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="596" y="383">L2</text>
+
+  <path class="line" d="M 530 810 L 690 810"/>
+  <rect class="chip-accent" x="580" y="764" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="596" y="787">L3</text>
+
+  <path class="line" d="M 1500 405 L 1660 405"/>
+  <rect class="chip-accent" x="1548" y="360" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="1564" y="383">L4</text>
+
+  <path class="line" d="M 1500 590 L 2110 590"/>
+  <rect class="chip-accent" x="1770" y="544" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="1786" y="567">L5</text>
+
+  <path class="line" d="M 530 430 C 780 430, 1600 430, 2110 430"/>
+  <rect class="chip-accent" x="1180" y="384" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="1196" y="407">L6</text>
+
+  <path class="line" d="M 530 860 C 760 860, 1550 860, 2110 475"/>
+  <rect class="chip-accent" x="1200" y="814" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="1216" y="837">L7</text>
+
+  <path class="line" d="M 1500 820 L 1660 820"/>
+  <rect class="chip-accent" x="1548" y="774" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="1564" y="797">L8</text>
+
+  <path class="line" d="M 1500 860 L 1950 860"/>
+  <rect class="chip-accent" x="1680" y="814" width="60" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="1696" y="837">L9</text>
+
+  <path class="line" d="M 1500 900 L 2240 900"/>
+  <rect class="chip-accent" x="1840" y="854" width="70" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="1853" y="877">L10</text>
+
+  <path class="line" d="M 2020 1108 L 2100 1108"/>
+  <rect class="chip-accent" x="2028" y="1060" width="70" height="34" rx="12" ry="12"/>
+  <text class="chip-accent-text" x="2042" y="1083">L11</text>
+
+  <!-- Legends -->
+  <rect class="legend-card" x="100" y="1260" width="760" height="580" rx="18" ry="18"/>
+  <text class="legend-title" x="135" y="1300">Розшифровка таблиць і ключів</text>
+  <text class="legend-text" x="135" y="1350">PK - первинний ключ таблиці</text>
+  <text class="legend-text" x="135" y="1392">FK - зовнішній ключ, який посилається на батьківську таблицю</text>
+  <text class="legend-text" x="135" y="1434">AK - альтернативний ключ або унікальне бізнес-поле</text>
+  <text class="legend-text" x="135" y="1490">Employee - центральна таблиця, що зберігає поточний стан працівника</text>
+  <text class="legend-text" x="135" y="1532">JobHistory - окрема історична таблиця, що не перезаписує Employee</text>
+  <text class="legend-text" x="135" y="1574">Document, Vacation, Timesheet, Education - залежні таблиці по працівнику</text>
+  <text class="legend-text" x="135" y="1616">Role і User - окремий адміністративний контур доступу</text>
+
+  <rect class="legend-card" x="910" y="1260" width="760" height="580" rx="18" ry="18"/>
+  <text class="legend-title" x="945" y="1300">Зовнішні ключі L1-L11</text>
+  <text class="legend-text" x="945" y="1350">L1: Position.department_id -&gt; Department.id</text>
+  <text class="legend-text" x="945" y="1392">L2: Employee.current_department_id -&gt; Department.id</text>
+  <text class="legend-text" x="945" y="1434">L3: Employee.current_position_id -&gt; Position.id</text>
+  <text class="legend-text" x="945" y="1476">L4: Document.employee_id -&gt; Employee.id</text>
+  <text class="legend-text" x="945" y="1518">L5: JobHistory.employee_id -&gt; Employee.id</text>
+  <text class="legend-text" x="945" y="1560">L6: JobHistory.department_id -&gt; Department.id</text>
+  <text class="legend-text" x="945" y="1602">L7: JobHistory.position_id -&gt; Position.id</text>
+  <text class="legend-text" x="945" y="1644">L8: Education.employee_id -&gt; Employee.id</text>
+  <text class="legend-text" x="945" y="1686">L9: Vacation.employee_id -&gt; Employee.id</text>
+  <text class="legend-text" x="945" y="1728">L10: Timesheet.employee_id -&gt; Employee.id</text>
+  <text class="legend-text" x="945" y="1770">L11: User.role_id -&gt; Role.id</text>
+
+  <rect class="legend-card" x="1720" y="1260" width="760" height="580" rx="18" ry="18"/>
+  <text class="legend-title" x="1755" y="1300">Пояснення логічної моделі</text>
+  <text class="legend-text" x="1755" y="1350">1. Поточний стан працівника зберігається в Employee.</text>
+  <text class="legend-text" x="1755" y="1392">2. Історія кадрових змін зберігається в JobHistory.</text>
+  <text class="legend-text" x="1755" y="1434">3. Департамент і посада не дублюються текстом у картці працівника.</text>
+  <text class="legend-text" x="1755" y="1476">4. inn є унікальним бізнес-ідентифікатором працівника.</text>
+  <text class="legend-text" x="1755" y="1518">5. Документи, освіта, відпустки та табелі винесені в окремі таблиці.</text>
+  <text class="legend-text" x="1755" y="1560">6. Логічна модель відповідає 3NF і підтримує масштабування.</text>
+  <text class="legend-text" x="1755" y="1602">7. Модель легко розширюється технічними таблицями для аудиту, черги і версіонування.</text>
+</svg>

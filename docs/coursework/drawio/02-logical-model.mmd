@@ -1,0 +1,106 @@
+erDiagram
+    DEPARTMENT ||--o{ POSITION : "L1"
+    DEPARTMENT ||--o{ EMPLOYEE : "L2"
+    POSITION ||--o{ EMPLOYEE : "L3"
+    EMPLOYEE ||--o{ DOCUMENT : "L4"
+    EMPLOYEE ||--o{ JOB_HISTORY : "L5"
+    DEPARTMENT ||--o{ JOB_HISTORY : "L6"
+    POSITION ||--o{ JOB_HISTORY : "L7"
+    EMPLOYEE ||--o{ EDUCATION : "L8"
+    EMPLOYEE ||--o{ VACATION : "L9"
+    EMPLOYEE ||--o{ TIMESHEET : "L10"
+    ROLE ||--o{ USER : "L11"
+
+    DEPARTMENT {
+        int id PK
+        string name
+        string description
+    }
+
+    POSITION {
+        int id PK
+        string name
+        decimal salary
+        int department_id FK
+    }
+
+    EMPLOYEE {
+        bigint id PK
+        string first_name
+        string last_name
+        string middle_name
+        string gender
+        string marital_status
+        string inn UK
+        string address_registration
+        string address_actual
+        string email
+        string phone_main
+        string phone_work
+        date birth_date
+        date hire_date
+        date dismissal_date
+        blob avatar
+        string avatar_content_type
+        string status
+        int current_department_id FK
+        int current_position_id FK
+    }
+
+    JOB_HISTORY {
+        bigint id PK
+        bigint employee_id FK
+        int department_id FK
+        int position_id FK
+        date start_date
+        date end_date
+        decimal personal_salary
+        string event_type
+    }
+
+    DOCUMENT {
+        bigint id PK
+        bigint employee_id FK
+        string file_name
+        string file_type
+        string document_category
+        blob data
+    }
+
+    EDUCATION {
+        bigint id PK
+        bigint employee_id FK
+        string institution
+        string faculty
+        string degree
+        string graduation_year
+    }
+
+    VACATION {
+        int id PK
+        bigint employee_id FK
+        date start_date
+        date end_date
+        string type
+    }
+
+    TIMESHEET {
+        int id PK
+        bigint employee_id FK
+        date work_date
+        int worked_hours
+    }
+
+    ROLE {
+        int id PK
+        string name
+        string description
+    }
+
+    USER {
+        int id PK
+        string username
+        string password
+        string email
+        int role_id FK
+    }

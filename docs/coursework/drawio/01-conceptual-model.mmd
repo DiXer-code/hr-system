@@ -1,0 +1,90 @@
+erDiagram
+    DEPARTMENT ||--o{ POSITION : "містить"
+    DEPARTMENT ||--o{ EMPLOYEE : "має працівників"
+    POSITION ||--o{ EMPLOYEE : "призначається"
+    EMPLOYEE ||--o{ JOB_HISTORY : "має історію"
+    DEPARTMENT ||--o{ JOB_HISTORY : "фігурує в історії"
+    POSITION ||--o{ JOB_HISTORY : "фігурує в історії"
+    EMPLOYEE ||--o{ DOCUMENT : "має документи"
+    EMPLOYEE ||--o{ VACATION : "має відпустки"
+    EMPLOYEE ||--o{ TIMESHEET : "має табелі"
+    EMPLOYEE ||--o{ EDUCATION : "має освіту"
+    ROLE ||--o{ USER : "призначається"
+
+    DEPARTMENT {
+        int id PK
+        string name
+        string description
+    }
+
+    POSITION {
+        int id PK
+        string name
+        decimal salary
+        int department_id FK
+    }
+
+    EMPLOYEE {
+        bigint id PK
+        string first_name
+        string last_name
+        string inn UK
+        date hire_date
+        string status
+        int current_department_id FK
+        int current_position_id FK
+    }
+
+    JOB_HISTORY {
+        bigint id PK
+        bigint employee_id FK
+        int department_id FK
+        int position_id FK
+        date start_date
+        date end_date
+        string event_type
+    }
+
+    DOCUMENT {
+        bigint id PK
+        bigint employee_id FK
+        string file_name
+        string file_type
+        string document_category
+    }
+
+    VACATION {
+        int id PK
+        bigint employee_id FK
+        date start_date
+        date end_date
+        string type
+    }
+
+    TIMESHEET {
+        int id PK
+        bigint employee_id FK
+        date work_date
+        int worked_hours
+    }
+
+    EDUCATION {
+        bigint id PK
+        bigint employee_id FK
+        string institution
+        string faculty
+        string degree
+    }
+
+    ROLE {
+        int id PK
+        string name
+        string description
+    }
+
+    USER {
+        int id PK
+        string username
+        string email
+        int role_id FK
+    }

@@ -1,0 +1,212 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1630" viewBox="0 0 2200 1630" role="img" aria-labelledby="title desc">
+  <title id="title">Концептуальна ER-модель HR System</title>
+  <desc id="desc">Велика і деталізована діаграма сутностей і зв'язків кадрової системи HR System з поясненням кратностей і бізнес-правил.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2.5; }
+      .panel-title { font: 700 30px Arial, sans-serif; fill: #0f172a; }
+      .box { fill: #ffffff; stroke: #334155; stroke-width: 2.5; }
+      .box-core { fill: #eff6ff; stroke: #2563eb; stroke-width: 4; }
+      .title { font: 700 22px Arial, sans-serif; fill: #0f172a; }
+      .text { font: 18px Arial, sans-serif; fill: #334155; }
+      .small { font: 17px Arial, sans-serif; fill: #475569; }
+      .caption { font: 700 42px Arial, sans-serif; fill: #0f172a; }
+      .subcaption { font: 20px Arial, sans-serif; fill: #475569; }
+      .line { stroke: #475569; stroke-width: 3; fill: none; }
+      .line-accent { stroke: #2563eb; stroke-width: 3.5; fill: none; }
+      .chip { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.8; }
+      .chip-r { fill: #dbeafe; stroke: #60a5fa; stroke-width: 1.8; }
+      .chip-text { font: 700 18px Arial, sans-serif; fill: #0f172a; }
+      .chip-r-text { font: 700 18px Arial, sans-serif; fill: #1d4ed8; }
+      .legend-card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .legend-title { font: 700 24px Arial, sans-serif; fill: #0f172a; }
+      .legend-text { font: 18px Arial, sans-serif; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="2200" height="1630"/>
+
+  <text class="caption" x="70" y="72">HR System: концептуальна модель бази даних</text>
+  <text class="subcaption" x="70" y="112">Схема побудована так, щоб відразу було видно центральну сутність, довідники, підлеглі дані, історію та контур доступу.</text>
+
+  <rect class="panel" x="50" y="160" width="540" height="740" rx="28" ry="28"/>
+  <text class="panel-title" x="88" y="212">1. Довідники та структура</text>
+
+  <rect class="panel" x="1620" y="160" width="530" height="650" rx="28" ry="28"/>
+  <text class="panel-title" x="1658" y="212">2. Документи та історія</text>
+
+  <rect class="panel" x="640" y="760" width="920" height="330" rx="28" ry="28"/>
+  <text class="panel-title" x="678" y="812">3. Операційні записи працівника</text>
+
+  <rect class="panel" x="1620" y="860" width="530" height="230" rx="28" ry="28"/>
+  <text class="panel-title" x="1658" y="912">4. Контур доступу</text>
+
+  <rect class="panel" x="50" y="1130" width="2100" height="440" rx="28" ry="28"/>
+  <text class="panel-title" x="88" y="1182">5. Розшифровка зв'язків і правила цілісності</text>
+
+  <rect class="box" x="120" y="290" width="400" height="190" rx="18" ry="18"/>
+  <text class="title" x="155" y="332">Department</text>
+  <text class="text" x="155" y="374">• назва департаменту</text>
+  <text class="text" x="155" y="408">• опис функцій підрозділу</text>
+  <text class="text" x="155" y="442">• організаційна одиниця компанії</text>
+
+  <rect class="box" x="120" y="560" width="400" height="220" rx="18" ry="18"/>
+  <text class="title" x="155" y="602">Position</text>
+  <text class="text" x="155" y="644">• назва посади</text>
+  <text class="text" x="155" y="678">• базова ставка</text>
+  <text class="text" x="155" y="712">• належить одному департаменту</text>
+  <text class="text" x="155" y="746">• використовується для призначення працівника</text>
+
+  <rect class="box box-core" x="710" y="310" width="780" height="390" rx="24" ry="24"/>
+  <text class="title" x="760" y="360">Employee</text>
+  <text class="text" x="760" y="412">• ПІБ, контакти, адреси, дата народження</text>
+  <text class="text" x="760" y="452">• ідентифікаційний номер працівника (inn)</text>
+  <text class="text" x="760" y="492">• поточний департамент і поточна посада</text>
+  <text class="text" x="760" y="532">• дата прийняття, дата звільнення, статус</text>
+  <text class="text" x="760" y="572">• фотографія працівника</text>
+  <text class="text" x="760" y="612">• центральна сутність усієї кадрової моделі</text>
+  <text class="small" x="760" y="662">Стани працівника: Активний, У відпустці, Лікарняний, Звільнений</text>
+
+  <rect class="box" x="1690" y="290" width="390" height="180" rx="18" ry="18"/>
+  <text class="title" x="1725" y="332">Document</text>
+  <text class="text" x="1725" y="374">• файл документа</text>
+  <text class="text" x="1725" y="408">• тип і категорія документа</text>
+  <text class="text" x="1725" y="442">• накази про прийняття, переведення, звільнення</text>
+
+  <rect class="box" x="1690" y="530" width="390" height="220" rx="18" ry="18"/>
+  <text class="title" x="1725" y="572">JobHistory</text>
+  <text class="text" x="1725" y="614">• тип події: прийняття / переведення / звільнення</text>
+  <text class="text" x="1725" y="648">• дата початку і дата завершення запису</text>
+  <text class="text" x="1725" y="682">• персональна ставка на момент події</text>
+  <text class="text" x="1725" y="716">• зберігає знімок department і position</text>
+
+  <rect class="box" x="690" y="860" width="220" height="180" rx="18" ry="18"/>
+  <text class="title" x="740" y="904">Education</text>
+  <text class="text" x="725" y="950">• заклад освіти</text>
+  <text class="text" x="725" y="984">• факультет</text>
+  <text class="text" x="725" y="1018">• ступінь / рік</text>
+
+  <rect class="box" x="990" y="860" width="220" height="180" rx="18" ry="18"/>
+  <text class="title" x="1045" y="904">Vacation</text>
+  <text class="text" x="1025" y="950">• початок і кінець</text>
+  <text class="text" x="1025" y="984">• тип відпустки</text>
+  <text class="text" x="1025" y="1018">• період відсутності</text>
+
+  <rect class="box" x="1290" y="860" width="220" height="180" rx="18" ry="18"/>
+  <text class="title" x="1332" y="904">Timesheet</text>
+  <text class="text" x="1325" y="950">• дата</text>
+  <text class="text" x="1325" y="984">• відпрацьовані години</text>
+  <text class="text" x="1325" y="1018">• денний облік</text>
+
+  <rect class="box" x="1760" y="950" width="150" height="100" rx="18" ry="18"/>
+  <text class="title" x="1810" y="995">Role</text>
+  <text class="text" x="1787" y="1032">• роль доступу</text>
+
+  <rect class="box" x="1970" y="950" width="150" height="100" rx="18" ry="18"/>
+  <text class="title" x="2020" y="995">User</text>
+  <text class="text" x="1992" y="1032">• обліковий запис</text>
+
+  <path class="line" d="M 320 480 L 320 560"/>
+  <rect class="chip-r" x="338" y="500" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="354" y="523">R1</text>
+  <rect class="chip" x="252" y="494" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="272" y="518">1</text>
+  <rect class="chip" x="336" y="534" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="353" y="558">0..*</text>
+
+  <path class="line-accent" d="M 520 390 L 710 390"/>
+  <rect class="chip-r" x="585" y="344" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="601" y="367">R2</text>
+  <rect class="chip" x="542" y="372" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="562" y="396">1</text>
+  <rect class="chip" x="640" y="372" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="657" y="396">0..*</text>
+  <rect class="chip" x="865" y="258" width="250" height="38" rx="12" ry="12"/>
+  <text class="chip-text" x="898" y="283">Employee.currentDepartment</text>
+
+  <path class="line-accent" d="M 520 650 L 710 650"/>
+  <rect class="chip-r" x="585" y="604" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="601" y="627">R3</text>
+  <rect class="chip" x="542" y="632" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="562" y="656">1</text>
+  <rect class="chip" x="640" y="632" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="657" y="656">0..*</text>
+  <rect class="chip" x="890" y="714" width="220" height="38" rx="12" ry="12"/>
+  <text class="chip-text" x="933" y="739">Employee.currentPosition</text>
+
+  <path class="line" d="M 1490 400 L 1690 400"/>
+  <rect class="chip-r" x="1552" y="354" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="1568" y="377">R4</text>
+  <rect class="chip" x="1510" y="382" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1530" y="406">1</text>
+  <rect class="chip" x="1602" y="382" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1619" y="406">0..*</text>
+
+  <path class="line" d="M 1490 600 L 1690 600"/>
+  <rect class="chip-r" x="1552" y="554" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="1568" y="577">R5</text>
+  <rect class="chip" x="1510" y="582" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1530" y="606">1</text>
+  <rect class="chip" x="1602" y="582" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1619" y="606">0..*</text>
+
+  <path class="line" d="M 800 700 L 800 860"/>
+  <rect class="chip-r" x="820" y="758" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="836" y="781">R6</text>
+  <rect class="chip" x="730" y="732" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="750" y="756">1</text>
+  <rect class="chip" x="730" y="808" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="747" y="832">0..*</text>
+
+  <path class="line" d="M 1100 700 L 1100 860"/>
+  <rect class="chip-r" x="1120" y="758" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="1136" y="781">R7</text>
+  <rect class="chip" x="1030" y="732" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1050" y="756">1</text>
+  <rect class="chip" x="1030" y="808" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1047" y="832">0..*</text>
+
+  <path class="line" d="M 1400 700 L 1400 860"/>
+  <rect class="chip-r" x="1420" y="758" width="64" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="1436" y="781">R8</text>
+  <rect class="chip" x="1330" y="732" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1350" y="756">1</text>
+  <rect class="chip" x="1330" y="808" width="78" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1347" y="832">0..*</text>
+
+  <path class="line" d="M 1910 1000 L 1970 1000"/>
+  <rect class="chip-r" x="1880" y="910" width="70" height="34" rx="12" ry="12"/>
+  <text class="chip-r-text" x="1894" y="933">R11</text>
+  <rect class="chip" x="1885" y="950" width="52" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1905" y="974">1</text>
+  <rect class="chip" x="1928" y="910" width="100" height="36" rx="12" ry="12"/>
+  <text class="chip-text" x="1945" y="934">0..*</text>
+
+  <rect class="legend-card" x="90" y="1220" width="630" height="300" rx="20" ry="20"/>
+  <text class="legend-title" x="125" y="1264">Основні структурні зв'язки R1-R3</text>
+  <text class="legend-text" x="125" y="1312">R1: Department 1 - 0..* Position</text>
+  <text class="legend-text" x="125" y="1354">Один департамент містить багато посад.</text>
+  <text class="legend-text" x="125" y="1406">R2: Department 1 - 0..* Employee</text>
+  <text class="legend-text" x="125" y="1448">Працівник має не більше одного поточного департаменту.</text>
+  <text class="legend-text" x="125" y="1500">R3: Position 1 - 0..* Employee</text>
+  <text class="legend-text" x="125" y="1542">Працівник має не більше однієї поточної посади.</text>
+
+  <rect class="legend-card" x="785" y="1220" width="630" height="300" rx="20" ry="20"/>
+  <text class="legend-title" x="820" y="1264">Підлеглі сутності та історія R4-R10</text>
+  <text class="legend-text" x="820" y="1312">R4: Employee 1 - 0..* Document</text>
+  <text class="legend-text" x="820" y="1354">R5: Employee 1 - 0..* JobHistory</text>
+  <text class="legend-text" x="820" y="1396">R6: Employee 1 - 0..* Education</text>
+  <text class="legend-text" x="820" y="1438">R7: Employee 1 - 0..* Vacation</text>
+  <text class="legend-text" x="820" y="1480">R8: Employee 1 - 0..* Timesheet</text>
+  <text class="legend-text" x="820" y="1522">R9-R10: у JobHistory додатково зберігаються Department і Position</text>
+
+  <rect class="legend-card" x="1480" y="1220" width="630" height="300" rx="20" ry="20"/>
+  <text class="legend-title" x="1515" y="1264">Бізнес-правила цілісності</text>
+  <text class="legend-text" x="1515" y="1312">1. Посада повинна належати вибраному департаменту.</text>
+  <text class="legend-text" x="1515" y="1354">2. Кожне прийняття, переведення або звільнення створює JobHistory.</text>
+  <text class="legend-text" x="1515" y="1396">3. Працівника не можна видалити, якщо є Vacation або Timesheet.</text>
+  <text class="legend-text" x="1515" y="1438">4. Департамент не можна видалити, якщо до нього прив'язані працівники або посади.</text>
+  <text class="legend-text" x="1515" y="1480">5. Ідентифікаційний номер працівника є унікальним.</text>
+  <text class="legend-text" x="1515" y="1522">6. R11: одна Role може бути призначена багатьом User.</text>
+</svg>
